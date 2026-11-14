@@ -11,12 +11,19 @@ let next4Button;
 let e1Button, e2Button, e3Button;
 let restartButton;
 let marsBg, labandmaintBg;
+let idleAstronaut1, idleAstronaut2;
+let idleAstronaut1Img, idleAstronaut2Img, alertAstronautImg, happyAstronautImg, worriedAstronautImg;
 
 let screen = 0;
 
 function preload() {
   marsBg = loadImage("assets/marsbg.png");
   labandmaintBg = loadImage("assets/labandmaint.png");
+  idleAstronaut1Img = loadImage("assets/idleastronaut1.png");
+  idleAstronaut2Img = loadImage("assets/idleastronaut2.png");
+  alertAstronautImg = loadImage("assets/alertastronaut.png");
+  happyAstronautImg = loadImage("assets/happyastronaut.png");
+  worriedAstronautImg = loadImage("assets/worriedastronaut.png");
 }
 
 /* SETUP RUNS ONCE */
@@ -46,7 +53,20 @@ function setup() {
   e2Button = new Sprite(-200, -200);
   e3Button = new Sprite(-200, -200);
   restartButton = new Sprite(-200, -200);
+
+  // Create idle astronaut sprites
+  idleAstronaut1 = new Sprite(-500, -500, 100, 150);
+  idleAstronaut1.image = idleAstronaut1Img;
+  idleAstronaut1.collider = 'none';
+  idleAstronaut1.rotation = 0;
+
+  idleAstronaut2 = new Sprite(-500, -500, 100, 150);
+  idleAstronaut2.image = idleAstronaut2Img;
+  idleAstronaut2.collider = 'none';
+  idleAstronaut2.rotation = 0;
 }
+
+ 
 
 /* DRAW LOOP REPEATS */
 function draw() {
@@ -56,7 +76,7 @@ function draw() {
     // Display homescreen
     background("#180B24");
     showStarfield();
-    
+
     noStroke();
     fill('#ffe2ab');
     textSize(30)
@@ -83,7 +103,6 @@ function draw() {
   // SCREEN 1: DECISION 1 (Base Camp Location)
   else if (screen == 1) {
     background(labandmaintBg);
-    txt = "DAY 1: Landing\n2 crew, 1 pressurized rover, 33 days.\n\nDECISION 1: Where do we park base camp?"
     fill('#ffffff');
     stroke('white')
     strokeWeight(1);
@@ -92,14 +111,35 @@ function draw() {
     text("DAY 1: Landing", width / 2, height / 2 - 400);
     noStroke();
 
+    // Display sprites
+    idleAstronaut1.visible = true;
+    idleAstronaut1.scale = 0.5;
+    idleAstronaut1.pos = { x: 300, y: height / 2 - 100 };
+
+    idleAstronaut2.visible = true;
+    idleAstronaut2.pos = { x: 1100, y: height / 2 - 100 };
+    idleAstronaut2.scale = 1.5;
+
+    // Transculent box
+    fill(18, 10, 31, 230);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 250, width - 180, height - 900, 15);
+    noStroke();
+
+    fill('white');
+    text("2 crew, 1 pressurized rover, 33 days. Where do we park base camp?", width / 2, height / 2 + 180);
+
     a1Button.w = 450; a1Button.h = 90; a1Button.collider = 'k'; a1Button.color = '#ffbe82';
+    a1Button.visible = true;
     a1Button.text = "Sunny Ridge\n(More solar power, less shielding)";
-    a1Button.pos = { x: width / 2 - 240, y: height / 2 + 180 };
+    a1Button.pos = { x: width / 2 - 240, y: height / 2 + 300 };
     a1Button.rotation = 0;
 
-    a2Button.w = 450; a2Button.h = 90; a2Button.collider = 'k'; a2Button.color = '##ffbe82';
+    a2Button.w = 450; a2Button.h = 90; a2Button.collider = 'k'; a2Button.color = '#ffdab8';
     a2Button.text = "Crater Bowl\n(Walls block radiation, less sun)";
-    a2Button.pos = { x: width / 2 + 240, y: height / 2 + 180 };
+    a2Button.pos = { x: width / 2 + 240, y: height / 2 + 300 };
     a2Button.rotation = 0;
 
     if (a1Button.mouse.presses() || a2Button.mouse.presses()) {

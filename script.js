@@ -15,8 +15,8 @@ let marsBg, labandmaintBg;
 let screen = 0;
 
 function preload() {
-  marsBg = loadImage("assets/marsbg.jpeg");
-  labandmaintBg = loadImage("assets/labandmaint.jpeg");
+  marsBg = loadImage("assets/marsbg.png");
+  labandmaintBg = loadImage("assets/labandmaint.png");
 }
 
 /* SETUP RUNS ONCE */
@@ -82,9 +82,15 @@ function draw() {
 
   // SCREEN 1: DECISION 1 (Base Camp Location)
   else if (screen == 1) {
-    background("#180B24");
-    showStarfield();
-    drawTextBox("DAY 1: Landing\n2 crew, 1 pressurized rover, 33 days.\n\nDECISION 1: Where do we park base camp?");
+    background(labandmaintBg);
+    txt = "DAY 1: Landing\n2 crew, 1 pressurized rover, 33 days.\n\nDECISION 1: Where do we park base camp?"
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("DAY 1: Landing", width / 2, height / 2 - 400);
+    noStroke();
 
     a1Button.w = 450; a1Button.h = 90; a1Button.collider = 'k'; a1Button.color = '#ffbe82';
     a1Button.text = "Sunny Ridge\n(More solar power, less shielding)";

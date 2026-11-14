@@ -47,17 +47,17 @@ function draw() {
   // HOMESCREEN (Screen 0)
   if (screen == 0) {
 
-     // Display homescreen
-  background("#180B24");
+    // Display homescreen
+    background("#180B24");
     showStarfield();
     
     noStroke();
     fill('#ffe2ab');
-    textSize()
+    textSize(30)
     text(
       "You and your fellow astronaut have a 33-day Mars mission\ncoming up to explore and conduct research on the surface of Mars...\nbut are you ready for it?\nLet's see if you have what it takes to manage resources and get through\na 33-day mission to Mars through this simulation!",
       width / 2,
-      height / 2 - 150
+      height / 2 - 160
     );
 
     // Display Enter Button
@@ -281,7 +281,7 @@ function draw() {
 function drawTextBox(txt) {
   fill('#ffe2ab');
   noStroke();
-  textSize(25);
+  textSize(28);
   textAlign(CENTER, CENTER);
   text(txt, width / 2, height / 2 - 80);
 }

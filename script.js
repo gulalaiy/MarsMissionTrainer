@@ -94,18 +94,30 @@ function draw() {
 
   // SCREEN 1: DECISION 1 (Base Camp Location)
   else if (screen == 1) {
-    background(labandmaintBg);
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
+
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = labandmaintBg.width / labandmaintBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+    
+    image(labandmaintBg, width / 2, height / 2, drawWidth, drawHeight);
+
     fill('#ffffff');
     stroke('white')
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("DAY 1: Landing", width / 2, height / 2 - 400);
+    text("DAY 1: Landing", width / 2, height / 2 - 420);
     noStroke();
 
     // Display astronauts
-    image(idleAstronaut1Img, -170, height / 2 - 500, 850, 1050); // x, y, width, height
-    image(idleAstronaut2Img, 700, height / 2 - 440, 850, 1050);
+    image(idleAstronaut1Img, 250, height / 2 + 25, 750, 880); // x, y, width, height
+    image(idleAstronaut2Img, width - 250, height / 2 + 77, 750, 880);
 
 
     // Transculent box
@@ -113,19 +125,19 @@ function draw() {
     stroke('#ff8c49');
     strokeWeight(3);
     rectMode(CENTER);
-    rect(width / 2, height / 2 + 290, width - 180, height - 950, 15);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
     noStroke();
 
     fill('white');
     text("2 crew, 1 pressurized rover, 33 days. Where do we park base camp?", width / 2, height / 2 + 240);
 
-    a1Button.w = 450; a1Button.h = 90; a1Button.collider = 'k'; a1Button.color = '#ffbe82';
+    a1Button.w = 450; a1Button.h = 85; a1Button.collider = 'k'; a1Button.color = '#ffbe82';
     a1Button.visible = true;
     a1Button.text = "Sunny Ridge\n(More solar power, less shielding)";
     a1Button.pos = { x: width / 2 - 240, y: height / 2 + 330 };
     a1Button.rotation = 0;
 
-    a2Button.w = 450; a2Button.h = 90; a2Button.collider = 'k'; a2Button.color = '#ffdab8';
+    a2Button.w = 450; a2Button.h = 85; a2Button.collider = 'k'; a2Button.color = '#ffdab8';
     a2Button.text = "Crater Bowl\n(Walls block radiation, less sun)";
     a2Button.pos = { x: width / 2 + 240, y: height / 2 + 330 };
     a2Button.rotation = 0;
@@ -138,13 +150,25 @@ function draw() {
 
   // SCREEN 2: TIMESKIP 1 & EDUCATIONAL TASK (Days 2 to 9)
   else if (screen == 2) {
-    background(spectrometryBg);
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
+
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = spectrometryBg.width / spectrometryBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+
+    image(spectrometryBg, width / 2, height / 2, drawWidth, drawHeight);
+
     fill('#ffffff');
     stroke('white')
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("Day 5 Task: Scan Martian Samples",  width / 2, height / 2 - 400);
+    text("Day 5 Task: Scan Martian Samples",  width / 2, height / 2 - 420);
     noStroke();
 
     // Transculent box
@@ -152,16 +176,16 @@ function draw() {
     stroke('#ff8c49');
     strokeWeight(3);
     rectMode(CENTER);
-    rect(width / 2, height / 2 + 350, width - 240, height - 950, 15);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
     noStroke();
 
     fill('white');
-    textSize(26);
-    text("Astronauts use spectrometers to analyze rock mineral composition. Understanding \niron oxide dust helps us determine surface habitability and locate \npotential water ice deposits beneath the soil.", width / 2, height / 2 + 320);
+    textSize(25);
+    text("Astronauts use spectrometers to analyze rock mineral composition. Understanding iron oxide\n dust helps us determine surface habitability and locate potential water ice deposits \nbeneath the soil.", width / 2, height / 2 + 258);
 
-    next1Button.w = 260; next1Button.h = 70; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
+    next1Button.w = 260; next1Button.h = 61; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
     next1Button.text = "Continue to Event 1";
-    next1Button.pos = { x: width / 2, y: height / 2 + 420 };
+    next1Button.pos = { x: width / 2, y: height / 2 + 343 };
     next1Button.rotation = 0;
 
     if (next1Button.mouse.presses()) {
@@ -172,17 +196,29 @@ function draw() {
 
   // SCREEN 3: EVENT 1 & DECISION 2 (Day 10 Solar Flare Alert)
   else if (screen == 3) {
-    background(marsBg);
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
+
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = marsBg.width / marsBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+
+    image(marsBg, width / 2, height / 2, drawWidth, drawHeight);
+
     fill('#ffffff');
     stroke('white')
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("DAY 10: Solar flare alert from Earth (Real NASA DONKI data)!", width / 2, height / 2 - 400);
+    text("DAY 10: Solar flare alert from Earth!", width / 2, height / 2 - 420);
     noStroke();
 
     // Alert astronaut
-    image(alertAstronautImg, -50, height / 2 - 300, 400, 500);
+    image(alertAstronautImg, 140, height / 2 - 80, 350, 400);
 
 
     // Transculent box
@@ -190,7 +226,7 @@ function draw() {
     stroke('#ff8c49');
     strokeWeight(3);
     rectMode(CENTER);
-    rect(width / 2, height / 2 + 290, width - 180, height - 950, 15);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
     noStroke();
 
     fill('white');
@@ -198,14 +234,14 @@ function draw() {
     text("What do we do? Shelter in the storage zone is safe but the heater drains our power reserves... \nwhile finishing the sample risks high radiation but it will accelerate our scientific discoveries." , width / 2, height / 2 + 240);
 
 
-    b1Button.w = 420; b1Button.h = 90; b1Button.collider = 'k'; b1Button.color = '#ffb977';
+    b1Button.w = 420; b1Button.h = 85; b1Button.collider = 'k'; b1Button.color = '#ffb977';
     b1Button.text = "Shelter in storage zone\n(Safe, heaters drain power)";
-    b1Button.pos = { x: width / 2 - 230, y: height / 2 + 340 };
+    b1Button.pos = { x: width / 2 - 230, y: height / 2 + 320 };
     b1Button.rotation = 0;
 
-    b2Button.w = 420; b2Button.h = 90; b2Button.collider = 'k'; b2Button.color = '#ffc493';
+    b2Button.w = 420; b2Button.h = 85; b2Button.collider = 'k'; b2Button.color = '#ffc493';
     b2Button.text = "Finish sample drive first\n(Big science win, high radiation)";
-    b2Button.pos = { x: width / 2 + 230, y: height / 2 + 340 };
+    b2Button.pos = { x: width / 2 + 230, y: height / 2 + 320 };
     b2Button.rotation = 0;
 
     if (b1Button.mouse.presses() || b2Button.mouse.presses()) {
@@ -216,12 +252,42 @@ function draw() {
 
   // SCREEN 4: TIMESKIP 2 & EDUCATIONAL TASK (Days 11 to 17)
   else if (screen == 4) {
-    background(foodBg);
-    drawTextBox("Day 15: Nutritional Meal Preparation\n\nEducational Task:\nLong-duration space missions require carefully balanced nutrients.\nAstronauts monitor caloric intake and hydration closely\nto prevent muscle atrophy and bone density loss in low gravity.");
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
 
-    next2Button.w = 260; next2Button.h = 80; next2Button.collider = 'k'; next2Button.color = '#ffc49d';
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = foodBg.width / foodBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+
+    image(foodBg, width / 2, height / 2, drawWidth, drawHeight);
+
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("Day 15 Task: Nutritional Meal Preparation", width / 2, height / 2 - 420 );
+    noStroke();
+
+    // Transculent box
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
+    noStroke();
+
+    fill('white');
+    textSize(26);
+    text("Long-duration space missions require carefully balanced nutrients. Astronauts monitor caloric \nintake and hydration closely to prevent muscle atrophy and bone density loss in low gravity." , width / 2, height / 2 + 260);
+
+    next2Button.w = 260; next2Button.h = 70; next2Button.collider = 'k'; next2Button.color = '#ffc49d';
     next2Button.text = "Continue to Event 2";
-    next2Button.pos = { x: width / 2, y: height / 2 + 180 };
+    next2Button.pos = { x: width / 2, y: height / 2 + 340 };
     next2Button.rotation = 0;
 
     if (next2Button.mouse.presses()) {
@@ -232,24 +298,51 @@ function draw() {
 
   // SCREEN 5: EVENT 2 & DECISION 3 (Day 18 Dust Storm & Power Drop)
   else if (screen == 5) {
-    background(marsBg);
-    background(marsBg);
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
+
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = labandmaintBg.width / labandmaintBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+    
+    image(labandmaintBg, width / 2, height / 2, drawWidth, drawHeight);
+
     fill('#ffffff');
     stroke('white')
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("DAY 18 EVENT: Dust storm covers solar panels (20-min communication delay");
-    text("Power is dropping!");
+    text("DAY 18: Dust storm covers solar panels", width / 2, height / 2 - 420);
+    noStroke();
 
-    c1Button.w = 370; c1Button.h = 90; c1Button.collider = 'k'; c1Button.color = '#a2e8f5';
+    // Display astronauts
+    image(worriedAstronautImg, 250, height / 2 + 25, 750, 880); // x, y, width, height
+    image(idleAstronaut2Img, width - 250, height / 2 + 77, 750, 880);
+
+    // Transculent box
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
+    noStroke();
+
+    fill('white');
+    textSize(25);
+    text("Power is dropping and communication to and from the Earth is delayed! Do we \nsave power by switching off all lab equipment and heaters, or do we continue to gather data?", width / 2, height / 2 + 240);
+
+    c1Button.w = 370; c1Button.h = 85; c1Button.collider = 'k'; c1Button.color = '#ffb88f';
     c1Button.text = "Switch off science & heaters\n(Save power, lose research)";
-    c1Button.pos = { x: width / 2 - 200, y: height / 2 + 180 };
+    c1Button.pos = { x: width / 2 - 200, y: height / 2 + 330 };
     c1Button.rotation = 0;
 
-    c2Button.w = 390; c2Button.h = 90; c2Button.collider = 'k'; c2Button.color = '#c3e6eb';
+    c2Button.w = 390; c2Button.h = 85; c2Button.collider = 'k'; c2Button.color = '#ffdc9b';
     c2Button.text = "Keep science on\n(More data, risk low air pumps)";
-    c2Button.pos = { x: width / 2 + 200, y: height / 2 + 180 };
+    c2Button.pos = { x: width / 2 + 200, y: height / 2 + 330};
     c2Button.rotation = 0;
 
     if (c1Button.mouse.presses() || c2Button.mouse.presses()) {
@@ -260,12 +353,43 @@ function draw() {
 
   // SCREEN 6: TIMESKIP 3 & EDUCATIONAL TASK (Days 19 to 22)
   else if (screen == 6) {
-    background(marsBg);
-    drawTextBox("TIMESKIP (Days 19 to 22): Cleaning Solar Panels\n\nEducational Task:\nFine Martian dust clings to panels via electrostatic forces.\nRegular maintenance and sweeping are essential to restore\nphotovoltaic efficiency and maintain outpost power generation.");
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
 
-    next3Button.w = 260; next3Button.h = 80; next3Button.collider = 'k'; next3Button.color = '#9CE6FF';
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = marsBg.width / marsBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+
+    image(marsBg, width / 2, height / 2, drawWidth, drawHeight);
+
+
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("Day 19: Cleaning Solar Panels", width / 2, height / 2 - 420);
+    noStroke();
+
+    // Transculent box
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
+    noStroke();
+
+    fill('white')
+    textSize(25);
+    text("Fine Martian dust clings to panels via electrostatic forces. Regular maintenance and sweeping \nare essential to restore photovoltaic efficiency and maintain outpost power generation.",  width / 2, height / 2 + 240);
+
+    next3Button.w = 260; next3Button.h = 75; next3Button.collider = 'k'; next3Button.color = '#ffd19c';
     next3Button.text = "Continue to Event 3";
-    next3Button.pos = { x: width / 2, y: height / 2 + 180 };
+    next3Button.pos = { x: width / 2, y: height / 2 + 325 };
     next3Button.rotation = 0;
 
     if (next3Button.mouse.presses()) {
@@ -276,17 +400,51 @@ function draw() {
 
   // SCREEN 7: EVENT 3 & DECISION 4 (Day 23 Air Scrubber Alarm)
   else if (screen == 7) {
-    background(labandmaintBg);
-    drawTextBox("DAY 23 EVENT: Air scrubber alarm! CO2 levels rising in habitat.\n\nDECISION 4: How do we fix the air?");
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
 
-    d1Button.w = 390; d1Button.h = 90; d1Button.collider = 'k'; d1Button.color = '#b3e65f';
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = labandmaintBg.width / labandmaintBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+    
+    image(labandmaintBg, width / 2, height / 2, drawWidth, drawHeight);
+
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("DAY 23: Air scrubber alarm! CO2 levels rising in habitat." , width / 2, height / 2 - 420);
+    noStroke();
+
+    image(alertAstronautImg, 250, height / 2 + 25, 750, 880); // x, y, width, height
+    image(idleAstronaut2Img, width - 250, height / 2 + 77, 750, 880);
+
+
+    // Transculent box
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
+    noStroke();
+
+    fill('white');
+    textSize(25);
+    text("How do we fix the air? Repairing it now would be safe, but it would cost power and a whole \nday of science... on the other hand, we can use the backup scrubber, but there is no spare.",  width / 2, height / 2 + 240);
+
+    d1Button.w = 390; d1Button.h = 85; d1Button.collider = 'k'; d1Button.color = '#e69c5f';
     d1Button.text = "Repair it now\n(Costs power/science day, safe)";
-    d1Button.pos = { x: width / 2 - 200, y: height / 2 + 180 };
+    d1Button.pos = { x: width / 2 - 200, y: height / 2 + 330 };
     d1Button.rotation = 0;
 
-    d2Button.w = 380; d2Button.h = 90; d2Button.collider = 'k'; d2Button.color = '#cfe69c';
+    d2Button.w = 380; d2Button.h = 85; d2Button.collider = 'k'; d2Button.color = '#e6c39c';
     d2Button.text = "Use backup scrubber\n(Fast fix, no spares left)";
-    d2Button.pos = { x: width / 2 + 200, y: height / 2 + 180 };
+    d2Button.pos = { x: width / 2 + 200, y: height / 2 + 330 };
     d2Button.rotation = 0;
 
     if (d1Button.mouse.presses() || d2Button.mouse.presses()) {
@@ -297,12 +455,43 @@ function draw() {
 
   // SCREEN 8: TIMESKIP 4 & EDUCATIONAL TASK (Days 24 to 29)
   else if (screen == 8) {
-    background(labandmaintBg);
-    drawTextBox("TIMESKIP (Days 24 to 29): Rover Checks & Maintenance\n\nEducational Task:\nMars rovers require rigorous daily telemetry checks and mechanical maintenance.\nMonitoring actuator wear, wheel traction, and power distribution systems ensures\nlong-term operational survival in the harsh, abrasive dust environment.");
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
 
-    next4Button.w = 340; next4Button.h = 80; next4Button.collider = 'k'; next4Button.color = '#9CE6FF';
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = marsBg.width / marsBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+
+    image(marsBg, width / 2, height / 2, drawWidth, drawHeight);
+
+
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("Day 26: Rover Checks & Maintenance", width / 2, height / 2 - 420);
+    noStroke();
+
+    // Transculent box
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
+    noStroke();
+
+    textSize(25);
+    fill('white');
+    text("Mars rovers require rigorous daily telemetry checks and mechanical maintenance. Monitoring \nactuator wear, wheel traction, and power distribution systems ensures long-term operational \nsurvival in the harsh, abrasive dust environment.",  width / 2, height / 2 + 250);
+
+    next4Button.w = 340; next4Button.h = 67; next4Button.collider = 'k'; next4Button.color = '#ffbb9c';
     next4Button.text = "Continue to Final Window";
-    next4Button.pos = { x: width / 2, y: height / 2 + 180 };
+    next4Button.pos = { x: width / 2, y: height / 2 + 337 };
     next4Button.rotation = 0;
 
     if (next4Button.mouse.presses()) {
@@ -313,22 +502,57 @@ function draw() {
 
   // SCREEN 9: EVENT 4 & DECISION 5 (Day 30 Final Window & Ending choice)
   else if (screen == 9) {
-    background(marsBg);
-    drawTextBox("DAY 30: Final mission window. Fuel and food for one trip.\n\nDECISION 5: Choose your final destination:");
+    // 1. Set a solid background color to fill the empty borders instead of stretching
+    background('#180B24'); 
+
+    // 2. Draw the background image while keeping its exact aspect ratio
+    imageMode(CENTER);
+    
+    // Calculate proportional height based on your canvas width to avoid squishing
+    let imgAspect = marsBg.width / marsBg.height;
+    let drawWidth = width; // or set a custom max width like 1200
+    let drawHeight = drawWidth / imgAspect;
+
+    image(marsBg, width / 2, height / 2, drawWidth, drawHeight);
+
+
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("DAY 30: Final mission window. Fuel and food for one trip." , width / 2, height / 2 - 420);
+    noStroke();
+
+    // Transculent box
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
+    noStroke();
+
+    // Alert astronaut
+    image(happyAstronautImg, 140, height / 2 - 80, 340, 390);
+    image(idleAstronaut2Img, 340, height / 2 - 51, 340, 390);
+
+    fill('white');
+    textSize(26);
+    text("Choosing the final destination:",  width / 2, height / 2 + 240);
 
     e1Button.w = 320; e1Button.h = 80; e1Button.collider = 'k'; e1Button.color = '#ff9e6d';
     e1Button.text = "Long drive to far cliffs\n(Biggest discovery / risk)";
-    e1Button.pos = { x: width / 2 - 330, y: height / 2 + 180 };
+    e1Button.pos = { x: width / 2 - 330, y: height / 2 + 320 };
     e1Button.rotation = 0;
 
     e2Button.w = 320; e2Button.h = 80; e2Button.collider = 'k'; e2Button.color = '#ffb977';
     e2Button.text = "Short trip near base\n(Safe, steady science)";
-    e2Button.pos = { x: width / 2, y: height / 2 + 180 };
+    e2Button.pos = { x: width / 2, y: height / 2 + 320 };
     e2Button.rotation = 0;
 
-    e3Button.w = 320; e3Button.h = 80; e3Button.collider = 'k'; e3Button.color = '#e2afeb';
+    e3Button.w = 320; e3Button.h = 80; e3Button.collider = 'k'; e3Button.color = '#ebcaaf';
     e3Button.text = "Skip science & head home\n(Safety first)";
-    e3Button.pos = { x: width / 2 + 330, y: height / 2 + 180 };
+    e3Button.pos = { x: width / 2 + 330, y: height / 2 + 320 };
     e3Button.rotation = 0;
 
     if (e1Button.mouse.presses()) {

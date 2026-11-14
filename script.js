@@ -10,7 +10,7 @@ let d1Button, d2Button;
 let next4Button;
 let e1Button, e2Button, e3Button;
 let restartButton;
-let marsBg, labandmaintBg;
+let marsBg, labandmaintBg, foodBg, spectrometryBg;
 let idleAstronaut1, idleAstronaut2;
 let idleAstronaut1Img, idleAstronaut2Img, alertAstronautImg, happyAstronautImg, worriedAstronautImg;
 
@@ -19,6 +19,8 @@ let screen = 0;
 function preload() {
   marsBg = loadImage("assets/marsbg.png");
   labandmaintBg = loadImage("assets/labandmaint.png");
+  foodBg = loadImage("assets/food.png");
+  spectrometryBg = loadImage("assets/spectrometry.png")
   idleAstronaut1Img = loadImage("assets/idleastronaut1.png");
   idleAstronaut2Img = loadImage("assets/idleastronaut2.png");
   alertAstronautImg = loadImage("assets/alertastronaut.png");
@@ -107,7 +109,7 @@ function draw() {
 
 
     // Transculent box
-    fill(18, 10, 31, 230);
+    fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
     rectMode(CENTER);
@@ -136,12 +138,30 @@ function draw() {
 
   // SCREEN 2: TIMESKIP 1 & EDUCATIONAL TASK (Days 2 to 9)
   else if (screen == 2) {
-    background(labandmaintBg);
-    drawTextBox("TIMESKIP (Days 2 to 9): Scan Martian Samples\n\nEducational Task:\nAstronauts use spectrometers to analyze rock mineral composition.\nUnderstanding iron oxide dust helps us determine surface habitability\nand locate potential water ice deposits beneath the soil.");
+    background(spectrometryBg);
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("Day 5 Task: Scan Martian Samples",  width / 2, height / 2 - 400);
+    noStroke();
 
-    next1Button.w = 260; next1Button.h = 80; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
+    // Transculent box
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 350, width - 240, height - 950, 15);
+    noStroke();
+
+    fill('white');
+    textSize(26);
+    text("Astronauts use spectrometers to analyze rock mineral composition. Understanding \niron oxide dust helps us determine surface habitability and locate \npotential water ice deposits beneath the soil.", width / 2, height / 2 + 320);
+
+    next1Button.w = 260; next1Button.h = 70; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
     next1Button.text = "Continue to Event 1";
-    next1Button.pos = { x: width / 2, y: height / 2 + 180 };
+    next1Button.pos = { x: width / 2, y: height / 2 + 420 };
     next1Button.rotation = 0;
 
     if (next1Button.mouse.presses()) {
@@ -160,16 +180,32 @@ function draw() {
     textAlign(CENTER, CENTER);
     text("DAY 10: Solar flare alert from Earth (Real NASA DONKI data)!", width / 2, height / 2 - 400);
     noStroke();
-    text("What do we do? Shelter in the storage zone is safe \nbut the heater drains our power reserves... \nwhile finishing the sample risks high radiation \nbut it will accelerate our scientific discoveries.");
+
+    // Alert astronaut
+    image(alertAstronautImg, -50, height / 2 - 300, 400, 500);
+
+
+    // Transculent box
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 290, width - 180, height - 950, 15);
+    noStroke();
+
+    fill('white');
+    textSize(25);
+    text("What do we do? Shelter in the storage zone is safe but the heater drains our power reserves... \nwhile finishing the sample risks high radiation but it will accelerate our scientific discoveries." , width / 2, height / 2 + 240);
+
 
     b1Button.w = 420; b1Button.h = 90; b1Button.collider = 'k'; b1Button.color = '#ffb977';
     b1Button.text = "Shelter in storage zone\n(Safe, heaters drain power)";
-    b1Button.pos = { x: width / 2 - 230, y: height / 2 + 180 };
+    b1Button.pos = { x: width / 2 - 230, y: height / 2 + 340 };
     b1Button.rotation = 0;
 
     b2Button.w = 420; b2Button.h = 90; b2Button.collider = 'k'; b2Button.color = '#ffc493';
     b2Button.text = "Finish sample drive first\n(Big science win, high radiation)";
-    b2Button.pos = { x: width / 2 + 230, y: height / 2 + 180 };
+    b2Button.pos = { x: width / 2 + 230, y: height / 2 + 340 };
     b2Button.rotation = 0;
 
     if (b1Button.mouse.presses() || b2Button.mouse.presses()) {
@@ -180,10 +216,10 @@ function draw() {
 
   // SCREEN 4: TIMESKIP 2 & EDUCATIONAL TASK (Days 11 to 17)
   else if (screen == 4) {
-    background(labandmaintBg);
-    drawTextBox("TIMESKIP (Days 11 to 17): Nutritional Meal Preparation\n\nEducational Task:\nLong-duration space missions require carefully balanced nutrients.\nAstronauts monitor caloric intake and hydration closely\nto prevent muscle atrophy and bone density loss in low gravity.");
+    background(foodBg);
+    drawTextBox("Day 15: Nutritional Meal Preparation\n\nEducational Task:\nLong-duration space missions require carefully balanced nutrients.\nAstronauts monitor caloric intake and hydration closely\nto prevent muscle atrophy and bone density loss in low gravity.");
 
-    next2Button.w = 260; next2Button.h = 80; next2Button.collider = 'k'; next2Button.color = '#9CE6FF';
+    next2Button.w = 260; next2Button.h = 80; next2Button.collider = 'k'; next2Button.color = '#ffc49d';
     next2Button.text = "Continue to Event 2";
     next2Button.pos = { x: width / 2, y: height / 2 + 180 };
     next2Button.rotation = 0;
@@ -197,7 +233,14 @@ function draw() {
   // SCREEN 5: EVENT 2 & DECISION 3 (Day 18 Dust Storm & Power Drop)
   else if (screen == 5) {
     background(marsBg);
-    drawTextBox("DAY 18 EVENT: Dust storm covers solar panels (20-min communication delay).\n\nDECISION 3: Power is dropping!");
+    background(marsBg);
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("DAY 18 EVENT: Dust storm covers solar panels (20-min communication delay");
+    text("Power is dropping!");
 
     c1Button.w = 370; c1Button.h = 90; c1Button.collider = 'k'; c1Button.color = '#a2e8f5';
     c1Button.text = "Switch off science & heaters\n(Save power, lose research)";

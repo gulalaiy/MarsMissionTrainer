@@ -10,8 +10,14 @@ let d1Button, d2Button;
 let next4Button;
 let e1Button, e2Button, e3Button;
 let restartButton;
+let marsBg, labandmaintBg;
 
 let screen = 0;
+
+function preload() {
+  marsBg = loadImage("assets/marsbg.jpeg");
+  labandmaintBg = loadImage("assets/labandmaint.jpeg");
+}
 
 /* SETUP RUNS ONCE */
 function setup() {
@@ -76,7 +82,8 @@ function draw() {
 
   // SCREEN 1: DECISION 1 (Base Camp Location)
   else if (screen == 1) {
-    background("#4A1525");
+    background("#180B24");
+    showStarfield();
     drawTextBox("DAY 1: Landing\n2 crew, 1 pressurized rover, 33 days.\n\nDECISION 1: Where do we park base camp?");
 
     a1Button.w = 450; a1Button.h = 90; a1Button.collider = 'k'; a1Button.color = '#ffbe82';
@@ -97,7 +104,7 @@ function draw() {
 
   // SCREEN 2: TIMESKIP 1 & EDUCATIONAL TASK (Days 2 to 9)
   else if (screen == 2) {
-    background("#12263A");
+    background(labandmaintBg);
     drawTextBox("TIMESKIP (Days 2 to 9): Scan Martian Samples\n\nEducational Task:\nAstronauts use spectrometers to analyze rock mineral composition.\nUnderstanding iron oxide dust helps us determine surface habitability\nand locate potential water ice deposits beneath the soil.");
 
     next1Button.w = 260; next1Button.h = 80; next1Button.collider = 'k'; next1Button.color = '#9CE6FF';
@@ -113,7 +120,7 @@ function draw() {
 
   // SCREEN 3: EVENT 1 & DECISION 2 (Day 10 Solar Flare Alert)
   else if (screen == 3) {
-    background("#4A1525");
+    background(marsBg);
     drawTextBox("DAY 10 EVENT: Solar flare alert from Earth (Real NASA DONKI data)!\n\nDECISION 2: What do we do?");
 
     b1Button.w = 420; b1Button.h = 90; b1Button.collider = 'k'; b1Button.color = '#ffb977';
@@ -134,7 +141,7 @@ function draw() {
 
   // SCREEN 4: TIMESKIP 2 & EDUCATIONAL TASK (Days 11 to 17)
   else if (screen == 4) {
-    background("#12263A");
+    background(labandmaintBg);
     drawTextBox("TIMESKIP (Days 11 to 17): Nutritional Meal Preparation\n\nEducational Task:\nLong-duration space missions require carefully balanced nutrients.\nAstronauts monitor caloric intake and hydration closely\nto prevent muscle atrophy and bone density loss in low gravity.");
 
     next2Button.w = 260; next2Button.h = 80; next2Button.collider = 'k'; next2Button.color = '#9CE6FF';
@@ -150,7 +157,7 @@ function draw() {
 
   // SCREEN 5: EVENT 2 & DECISION 3 (Day 18 Dust Storm & Power Drop)
   else if (screen == 5) {
-    background("#4A1525");
+    background(marsBg);
     drawTextBox("DAY 18 EVENT: Dust storm covers solar panels (20-min communication delay).\n\nDECISION 3: Power is dropping!");
 
     c1Button.w = 370; c1Button.h = 90; c1Button.collider = 'k'; c1Button.color = '#a2e8f5';
@@ -171,7 +178,7 @@ function draw() {
 
   // SCREEN 6: TIMESKIP 3 & EDUCATIONAL TASK (Days 19 to 22)
   else if (screen == 6) {
-    background("#12263A");
+    background(marsBg);
     drawTextBox("TIMESKIP (Days 19 to 22): Cleaning Solar Panels\n\nEducational Task:\nFine Martian dust clings to panels via electrostatic forces.\nRegular maintenance and sweeping are essential to restore\nphotovoltaic efficiency and maintain outpost power generation.");
 
     next3Button.w = 260; next3Button.h = 80; next3Button.collider = 'k'; next3Button.color = '#9CE6FF';
@@ -187,7 +194,7 @@ function draw() {
 
   // SCREEN 7: EVENT 3 & DECISION 4 (Day 23 Air Scrubber Alarm)
   else if (screen == 7) {
-    background("#4A1525");
+    background(labandmaintBg);
     drawTextBox("DAY 23 EVENT: Air scrubber alarm! CO2 levels rising in habitat.\n\nDECISION 4: How do we fix the air?");
 
     d1Button.w = 390; d1Button.h = 90; d1Button.collider = 'k'; d1Button.color = '#b3e65f';
@@ -208,7 +215,7 @@ function draw() {
 
   // SCREEN 8: TIMESKIP 4 & EDUCATIONAL TASK (Days 24 to 29)
   else if (screen == 8) {
-    background("#12263A");
+    background(labandmaintBg);
     drawTextBox("TIMESKIP (Days 24 to 29): Rover Checks & Maintenance\n\nEducational Task:\nMars rovers require rigorous daily telemetry checks and mechanical maintenance.\nMonitoring actuator wear, wheel traction, and power distribution systems ensures\nlong-term operational survival in the harsh, abrasive dust environment.");
 
     next4Button.w = 340; next4Button.h = 80; next4Button.collider = 'k'; next4Button.color = '#9CE6FF';
@@ -224,7 +231,7 @@ function draw() {
 
   // SCREEN 9: EVENT 4 & DECISION 5 (Day 30 Final Window & Ending choice)
   else if (screen == 9) {
-    background("#4A1525");
+    background(marsBg);
     drawTextBox("DAY 30: Final mission window. Fuel and food for one trip.\n\nDECISION 5: Choose your final destination:");
 
     e1Button.w = 320; e1Button.h = 80; e1Button.collider = 'k'; e1Button.color = '#ff9e6d';
@@ -256,7 +263,8 @@ function draw() {
 
   // ENDINGS (Screens 10, 11, 12)
   else if (screen >= 10 && screen <= 12) {
-    background("#12263A");
+    background("#180B24");
+    showStarfield();
     let endingText = "";
     if (screen == 10) endingText = "ENDING: SCIENCE STAR\nGreat discoveries made, tight resources managed!";
     if (screen == 11) endingText = "ENDING: STEADY EXPLORER\nBalanced mission executed with a safe return!";

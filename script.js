@@ -53,17 +53,6 @@ function setup() {
   e2Button = new Sprite(-200, -200);
   e3Button = new Sprite(-200, -200);
   restartButton = new Sprite(-200, -200);
-
-  // Create idle astronaut sprites
-  idleAstronaut1 = new Sprite(-500, -500, 100, 150);
-  idleAstronaut1.image = idleAstronaut1Img;
-  idleAstronaut1.collider = 'none';
-  idleAstronaut1.rotation = 0;
-
-  idleAstronaut2 = new Sprite(-500, -500, 100, 150);
-  idleAstronaut2.image = idleAstronaut2Img;
-  idleAstronaut2.collider = 'none';
-  idleAstronaut2.rotation = 0;
 }
 
  
@@ -76,6 +65,7 @@ function draw() {
     // Display homescreen
     background("#180B24");
     showStarfield();
+
 
     noStroke();
     fill('#ffe2ab');
@@ -111,35 +101,31 @@ function draw() {
     text("DAY 1: Landing", width / 2, height / 2 - 400);
     noStroke();
 
-    // Display sprites
-    idleAstronaut1.visible = true;
-    idleAstronaut1.scale = 0.5;
-    idleAstronaut1.pos = { x: 300, y: height / 2 - 100 };
+    // Display astronauts
+    image(idleAstronaut1Img, -170, height / 2 - 500, 850, 1050); // x, y, width, height
+    image(idleAstronaut2Img, 700, height / 2 - 440, 850, 1050);
 
-    idleAstronaut2.visible = true;
-    idleAstronaut2.pos = { x: 1100, y: height / 2 - 100 };
-    idleAstronaut2.scale = 1.5;
 
     // Transculent box
     fill(18, 10, 31, 230);
     stroke('#ff8c49');
     strokeWeight(3);
     rectMode(CENTER);
-    rect(width / 2, height / 2 + 250, width - 180, height - 900, 15);
+    rect(width / 2, height / 2 + 290, width - 180, height - 950, 15);
     noStroke();
 
     fill('white');
-    text("2 crew, 1 pressurized rover, 33 days. Where do we park base camp?", width / 2, height / 2 + 180);
+    text("2 crew, 1 pressurized rover, 33 days. Where do we park base camp?", width / 2, height / 2 + 240);
 
     a1Button.w = 450; a1Button.h = 90; a1Button.collider = 'k'; a1Button.color = '#ffbe82';
     a1Button.visible = true;
     a1Button.text = "Sunny Ridge\n(More solar power, less shielding)";
-    a1Button.pos = { x: width / 2 - 240, y: height / 2 + 300 };
+    a1Button.pos = { x: width / 2 - 240, y: height / 2 + 330 };
     a1Button.rotation = 0;
 
     a2Button.w = 450; a2Button.h = 90; a2Button.collider = 'k'; a2Button.color = '#ffdab8';
     a2Button.text = "Crater Bowl\n(Walls block radiation, less sun)";
-    a2Button.pos = { x: width / 2 + 240, y: height / 2 + 300 };
+    a2Button.pos = { x: width / 2 + 240, y: height / 2 + 330 };
     a2Button.rotation = 0;
 
     if (a1Button.mouse.presses() || a2Button.mouse.presses()) {
@@ -153,7 +139,7 @@ function draw() {
     background(labandmaintBg);
     drawTextBox("TIMESKIP (Days 2 to 9): Scan Martian Samples\n\nEducational Task:\nAstronauts use spectrometers to analyze rock mineral composition.\nUnderstanding iron oxide dust helps us determine surface habitability\nand locate potential water ice deposits beneath the soil.");
 
-    next1Button.w = 260; next1Button.h = 80; next1Button.collider = 'k'; next1Button.color = '#9CE6FF';
+    next1Button.w = 260; next1Button.h = 80; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
     next1Button.text = "Continue to Event 1";
     next1Button.pos = { x: width / 2, y: height / 2 + 180 };
     next1Button.rotation = 0;
@@ -167,7 +153,14 @@ function draw() {
   // SCREEN 3: EVENT 1 & DECISION 2 (Day 10 Solar Flare Alert)
   else if (screen == 3) {
     background(marsBg);
-    drawTextBox("DAY 10 EVENT: Solar flare alert from Earth (Real NASA DONKI data)!\n\nDECISION 2: What do we do?");
+    fill('#ffffff');
+    stroke('white')
+    strokeWeight(1);
+    textSize(30);
+    textAlign(CENTER, CENTER);
+    text("DAY 10: Solar flare alert from Earth (Real NASA DONKI data)!", width / 2, height / 2 - 400);
+    noStroke();
+    text("What do we do? Shelter in the storage zone is safe \nbut the heater drains our power reserves... \nwhile finishing the sample risks high radiation \nbut it will accelerate our scientific discoveries.");
 
     b1Button.w = 420; b1Button.h = 90; b1Button.collider = 'k'; b1Button.color = '#ffb977';
     b1Button.text = "Shelter in storage zone\n(Safe, heaters drain power)";

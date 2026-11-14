@@ -53,6 +53,7 @@ function draw() {
     
     noStroke();
     fill('#ffe2ab');
+    textSize()
     text(
       "You and your fellow astronaut have a 33-day Mars mission\ncoming up to explore and conduct research on the surface of Mars...\nbut are you ready for it?\nLet's see if you have what it takes to manage resources and get through\na 33-day mission to Mars through this simulation!",
       width / 2,
@@ -65,7 +66,7 @@ function draw() {
     enterButton.collider = 'k';
     enterButton.color = '#ffb067';
     enterButton.text = "Initiate Training";
-    enterButton.pos = { x: width / 2, y: height / 2 + 100 };
+    enterButton.pos = { x: width / 2, y: height / 2 + 130 };
 
     if (enterButton.mouse.presses()) {
       hideAllButtons();
@@ -80,12 +81,12 @@ function draw() {
 
     a1Button.w = 450; a1Button.h = 90; a1Button.collider = 'k'; a1Button.color = '#ffbe82';
     a1Button.text = "Sunny Ridge\n(More solar power, less shielding)";
-    a1Button.pos = { x: width / 2 - 300, y: height / 2 + 180 };
+    a1Button.pos = { x: width / 2 - 240, y: height / 2 + 180 };
     a1Button.rotation = 0;
 
-    a2Button.w = 413; a2Button.h = 90; a2Button.collider = 'k'; a2Button.color = '##ffbe82';
+    a2Button.w = 450; a2Button.h = 90; a2Button.collider = 'k'; a2Button.color = '##ffbe82';
     a2Button.text = "Crater Bowl\n(Walls block radiation, less sun)";
-    a2Button.pos = { x: width / 2 + 300, y: height / 2 + 180 };
+    a2Button.pos = { x: width / 2 + 240, y: height / 2 + 180 };
     a2Button.rotation = 0;
 
     if (a1Button.mouse.presses() || a2Button.mouse.presses()) {
@@ -115,14 +116,14 @@ function draw() {
     background("#4A1525");
     drawTextBox("DAY 10 EVENT: Solar flare alert from Earth (Real NASA DONKI data)!\n\nDECISION 2: What do we do?");
 
-    b1Button.w = 350; b1Button.h = 90; b1Button.collider = 'k'; b1Button.color = '#ffb977';
+    b1Button.w = 420; b1Button.h = 90; b1Button.collider = 'k'; b1Button.color = '#ffb977';
     b1Button.text = "Shelter in storage zone\n(Safe, heaters drain power)";
-    b1Button.pos = { x: width / 2 - 250, y: height / 2 + 180 };
+    b1Button.pos = { x: width / 2 - 230, y: height / 2 + 180 };
     b1Button.rotation = 0;
 
     b2Button.w = 420; b2Button.h = 90; b2Button.collider = 'k'; b2Button.color = '#ffc493';
     b2Button.text = "Finish sample drive first\n(Big science win, high radiation)";
-    b2Button.pos = { x: width / 2 + 220, y: height / 2 + 180 };
+    b2Button.pos = { x: width / 2 + 230, y: height / 2 + 180 };
     b2Button.rotation = 0;
 
     if (b1Button.mouse.presses() || b2Button.mouse.presses()) {
@@ -226,19 +227,19 @@ function draw() {
     background("#4A1525");
     drawTextBox("DAY 30: Final mission window. Fuel and food for one trip.\n\nDECISION 5: Choose your final destination:");
 
-    e1Button.w = 280; e1Button.h = 80; e1Button.collider = 'k'; e1Button.color = '#ff9e6d';
+    e1Button.w = 320; e1Button.h = 80; e1Button.collider = 'k'; e1Button.color = '#ff9e6d';
     e1Button.text = "Long drive to far cliffs\n(Biggest discovery / risk)";
-    e1Button.pos = { x: width / 2 - 320, y: height / 2 + 180 };
+    e1Button.pos = { x: width / 2 - 330, y: height / 2 + 180 };
     e1Button.rotation = 0;
 
-    e2Button.w = 280; e2Button.h = 80; e2Button.collider = 'k'; e2Button.color = '#ffb977';
+    e2Button.w = 320; e2Button.h = 80; e2Button.collider = 'k'; e2Button.color = '#ffb977';
     e2Button.text = "Short trip near base\n(Safe, steady science)";
     e2Button.pos = { x: width / 2, y: height / 2 + 180 };
     e2Button.rotation = 0;
 
-    e3Button.w = 280; e3Button.h = 80; e3Button.collider = 'k'; e3Button.color = '#e2afeb';
+    e3Button.w = 320; e3Button.h = 80; e3Button.collider = 'k'; e3Button.color = '#e2afeb';
     e3Button.text = "Skip science & head home\n(Safety first)";
-    e3Button.pos = { x: width / 2 + 320, y: height / 2 + 180 };
+    e3Button.pos = { x: width / 2 + 330, y: height / 2 + 180 };
     e3Button.rotation = 0;
 
     if (e1Button.mouse.presses()) {

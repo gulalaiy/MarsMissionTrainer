@@ -10,19 +10,17 @@ let d1Button, d2Button;
 let next4Button;
 let e1Button, e2Button, e3Button;
 let restartButton;
-let marsBg, labandmaintBg, foodBg, spectrometryBg, roverBg, cleanPanelsBg, dirtyPanelsBg;
-let idleAstronaut1, idleAstronaut2;
+let marsBg, labandmaintBg, foodBg, spectrometryBg, roverBg, cleanPanelsBg, dirtyPanelsBg, craterBg, ridgeBg;
 let idleAstronaut1Img, idleAstronaut2Img, alertAstronautImg, happyAstronautImg, worriedAstronautImg;
 let donkiFlares = [];
 let donkiNotifications = [];
 let liveFlareInfo = "Normal solar activity";
 let latestNotificationMsg = "NASA Space Weather: All clear.";
 let apiLoaded = false;
-let selectedLocation = null; 
-let marsTrekLink;
-let notificationSummary = "";
-let notificationSpeed = "";
-let notificationTime = "";
+
+// Location & Mars Trek Data tracking
+let selectedLocationKey = null; // "crater" or "ridge"
+let marsTrekButton = null;     // HTML DOM link for bottom-right widget
 
 let screen = 0;
 let panelsCleaned = false; // Tracks solar panel cleaning state
@@ -44,6 +42,8 @@ function preload() {
   roverBg = loadImage("assets/rovercheck.png");
   dirtyPanelsBg = loadImage("assets/dirtypanels.png");
   cleanPanelsBg = loadImage("assets/cleanpanels.png");
+  craterBg = loadImage("assets/crater.jpg");
+  ridgeBg = loadImage("assets/sunnyridge.jpg");
   idleAstronaut1Img = loadImage("assets/idleastronaut1.png");
   idleAstronaut2Img = loadImage("assets/idleastronaut2.png");
   alertAstronautImg = loadImage("assets/alertastronaut.png");
@@ -183,25 +183,66 @@ function draw() {
     a2Button.rotation = 0;
 
     if (a1Button.mouse.presses()) {
+      selectedLocationKey = "ridge";
+      setupMarsTrekButton();
       missionStats.power = min(100, max(0, missionStats.power + 15)); // Capped!
       missionStats.shielding -= 15;
       missionStats.radiationDose += 6;
       missionStats.decisionsLog.push({
         decision: "Base Camp: Sunny Ridge",
         tradeoff: "+15% Power, -15% Shielding, +6 Radiation",
-        source: "NASA Mars Trek & Curiosity RAD Data"
+        source: "NASA Mars Trek & Vera Rubin Ridge Data"
       });
       hideAllButtons();
-      screen = 2;
+      screen = 1.5;
     } else if (a2Button.mouse.presses()) {
+      selectedLocationKey = "crater";
+      setupMarsTrekButton();
       missionStats.power -= 10;
       missionStats.shielding += 20;
       missionStats.radiationDose -= 4;
       missionStats.decisionsLog.push({
         decision: "Base Camp: Crater Bowl",
         tradeoff: "-10% Power, +20% Shielding, -4 Radiation",
-        source: "NASA Mars Trek Elevation Data"
+        source: "NASA Mars Trek Gale Crater Data"
       });
+      hideAllButtons();
+      screen = 1.5;
+    }
+  }
+
+  // SCREEN 1.5: LANDING SITE ARRIVAL SCENE
+  else if (screen == 1.5) {
+    background('#180B24');
+    imageMode(CENTER);
+    let currentBg = selectedLocationKey === "ridge" ? ridgeBg : craterBg;
+    let imgAspect = currentBg.width / currentBg.height;
+    image(currentBg, width / 2, height / 2, width, width / imgAspect);
+
+    drawResourceTracker();
+    drawLiveNotificationWidget();
+
+    fill(18, 10, 31, 190);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 + 287, width - 180, height - 1050, 15);
+    noStroke();
+
+    fill('white');
+    textSize(25);
+    textAlign(CENTER, CENTER);
+    let arrivalText = selectedLocationKey === "ridge" 
+      ? "Arrived at Sunny Ridge. High ground established; photovoltaic arrays deploying." 
+      : "Arrived at Crater Bowl. Descent successful; shielding parameters nominal.";
+    text(arrivalText, width / 2, height / 2 + 260);
+
+    next1Button.w = 265; next1Button.h = 58; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
+    next1Button.text = "Proceed to next Days";
+    next1Button.pos = { x: width / 2, y: height / 2 + 320 };
+    next1Button.rotation = 0;
+
+    if (next1Button.mouse.presses()) {
       hideAllButtons();
       screen = 2;
     }
@@ -216,6 +257,7 @@ function draw() {
 
     drawResourceTracker();
     drawLiveNotificationWidget();
+    drawBottomRightLocationWidget(); // Bottom-right Mars Trek widget
 
     fill('#ffffff');
     stroke('white');
@@ -229,16 +271,16 @@ function draw() {
     stroke('#ff8c49');
     strokeWeight(3);
     rectMode(CENTER);
-    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
+    rect(width / 2, height / 2 + 290, width - 120, height - 1000, 15);
     noStroke();
 
     fill('white');
     textSize(22);
-    text("A spectrometer is used to disperse light into a spectrum that helps scientists study its physical \nand chemical properties like temperature, mass, and most importantly: chemical composition. Spectrometers \nare one of the sharpest tools for exploring and identifying samples from space. The Near Infrared Spectrograph \n(NIRSpectrograph) is designed to observe more than 100 objects simultaneously, making it highly efficient.", width / 2, height / 2 + 258);
+    text("A spectrometer is used to disperse light into a spectrum that helps scientists study its physical \nand chemical properties like temperature, mass, and most importantly: chemical composition. Spectrometers \nare one of the sharpest tools for exploring and identifying samples from space. The Near Infrared Spectrograph \n(NIRSpectrograph) is designed to observe more than 100 objects simultaneously, making it highly efficient.", width / 2, height / 2 + 260);
 
     next1Button.w = 260; next1Button.h = 58; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
     next1Button.text = "Continue to Event 1";
-    next1Button.pos = { x: width / 2, y: height / 2 + 343 };
+    next1Button.pos = { x: width / 2, y: height / 2 + 350 };
     next1Button.rotation = 0;
 
     if (next1Button.mouse.presses()) {
@@ -256,6 +298,7 @@ function draw() {
 
     drawResourceTracker();
     drawLiveNotificationWidget();
+    drawBottomRightLocationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -320,6 +363,7 @@ function draw() {
 
     drawResourceTracker();
     drawLiveNotificationWidget();
+    drawBottomRightLocationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -333,16 +377,21 @@ function draw() {
     stroke('#ff8c49');
     strokeWeight(3);
     rectMode(CENTER);
-    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
+    rect(width / 2, height / 2 + 273, width - 120, height - 960, 15);
     noStroke();
 
     fill('white');
-    textSize(26);
-    text("Long-duration space missions require carefully balanced nutrients. Astronauts monitor caloric \nintake and hydration closely to prevent muscle atrophy and bone density loss in low gravity." , width / 2, height / 2 + 260);
+    textSize(21);
+    text(`Astronauts' meals are decided months before their mission in space. Dietitians provide recommendations and
+      plan their meals so that astronauts meet their nutritional requirements. Space food is made lightweight and 
+      compact to save rocket space, and is crumb-free to avoid floating bits. Scientists can dehydrate, thermostabalize, 
+      and irradiate food to extend shelf life. Astronauts simply use scissors to cut open pre-made packets and add 
+      normal/hot water to activate their food and enjoy their meal! Studies show that quality food and quality time with
+      a crew can greatly increase well-being.`, width / 2, height / 2 + 245);
 
-    next2Button.w = 260; next2Button.h = 70; next2Button.collider = 'k'; next2Button.color = '#ffc49d';
+    next2Button.w = 260; next2Button.h = 55; next2Button.collider = 'k'; next2Button.color = '#ffc49d';
     next2Button.text = "Continue to Event 2";
-    next2Button.pos = { x: width / 2, y: height / 2 + 340 };
+    next2Button.pos = { x: width / 2, y: height / 2 + 355 };
     next2Button.rotation = 0;
 
     if (next2Button.mouse.presses()) {
@@ -360,6 +409,7 @@ function draw() {
 
     drawResourceTracker();
     drawLiveNotificationWidget();
+    drawBottomRightLocationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -426,6 +476,7 @@ function draw() {
 
     drawResourceTracker();
     drawLiveNotificationWidget();
+    drawBottomRightLocationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -445,7 +496,7 @@ function draw() {
     fill('white');
     textSize(25);
     if (!panelsCleaned) {
-      text("Fine Martian dust clings to panels via electrostatic forces. Regular maintenance and sweeping \nare essential to restore photovoltaic efficiency and maintain outpost power generation.", width / 2, height / 2 + 240);
+      text("Mars' atmosphere is very thin and dry, which means that it takes longer for dust particles \nto move out of the atmosphere. This poses a threat to the solar panels, as dust accumulates \non them and disrupts power systems and reduces efficiency.", width / 2, height / 2 + 240);
       next3Button.text = "Sweep & Clean Panels";
     } else {
       text("Panels cleaned successfully! Power generation restored to maximum capacity.", width / 2, height / 2 + 240);
@@ -453,7 +504,7 @@ function draw() {
     }
 
     next3Button.w = 280; next3Button.h = 75; next3Button.collider = 'k'; next3Button.color = '#ffd19c';
-    next3Button.pos = { x: width / 2, y: height / 2 + 325 };
+    next3Button.pos = { x: width / 2, y: height / 2 + 335 };
     next3Button.rotation = 0;
 
     if (next3Button.mouse.presses()) {
@@ -482,6 +533,7 @@ function draw() {
 
     drawResourceTracker();
     drawLiveNotificationWidget();
+    drawBottomRightLocationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -516,7 +568,7 @@ function draw() {
     }
   }
 
-  // SCREEN 9: EVENT 4 & DECISION 5 (Day 30 Final Window)
+  // SCREEN 9: EVENT 4 & DECISION 5 (Day 33 Final Window)
   else if (screen == 9) {
     background('#180B24'); 
     imageMode(CENTER);
@@ -525,6 +577,7 @@ function draw() {
 
     drawResourceTracker();
     drawLiveNotificationWidget();
+    drawBottomRightLocationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -598,6 +651,9 @@ function draw() {
     background("#180B24");
     showStarfield();
 
+    // Hide Mars Trek DOM button on ending screens
+    if (marsTrekButton) marsTrekButton.hide();
+
     let endingTitle = "";
     let endingDesc = "";
     if (screen == 10) {
@@ -613,7 +669,6 @@ function draw() {
       endingDesc = "Healthy crew returned home with careful resource use!";
     }
 
-    // Translucent box container for the evaluation report
     fill(18, 10, 31, 200);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -621,24 +676,20 @@ function draw() {
     rect(width / 2, height / 2 - 10, width - 200, height - 300, 15);
     noStroke();
 
-    // Ending Title (Bolder & Larger)
     fill('#ffb067');
     textSize(35);
     textStyle(BOLD);
     textAlign(CENTER, TOP);
     text(endingTitle, width / 2, height / 2 - 300);
 
-    // Ending Description & Question (Normal weight)
     textStyle(NORMAL);
     fill('#ffe2ab');
     textSize(19);
     text(endingDesc + "\nWhat would you trade differently next time?", width / 2, height / 2 - 250);
 
-    // Layout coordinates inside the box for logs and citations
     let startX = width / 2 - 500;
     let startY = height / 2 - 165;
 
-    // 1. Decision Log Section
     fill('#ffffff');
     textSize(20);
     textAlign(LEFT, TOP);
@@ -653,7 +704,6 @@ function draw() {
       yOffset += 24;
     }
 
-    // 2. Separate NASA Citation / Reference List Section
     yOffset += 10;
     fill('#ffffff');
     textSize(20);
@@ -662,8 +712,9 @@ function draw() {
 
     let referenceList = [
       "Spectrometry Info: https://science.nasa.gov/mission/webb/nirspec/",
+      "Food info: Source: https://www.asc-csa.gc.ca/eng/astronauts/living-in-space/eating-in-space.asp",
+      "Dust & Solar panel info: NASA Mars Surface Power PDF (2024).",
       "NASA Mars Trek: Landing site data.",
-      "NASA RadLab (OSDR): ISS baseline radiation dosimetry and absorbed dose rates.",
       "NASA DONKI: Space weather alerts, solar flares, and CME tracking.",
     ];
 
@@ -674,7 +725,6 @@ function draw() {
       yOffset += 20;
     }
 
-    // Replay Mission Button
     restartButton.w = 220; restartButton.h = 65; restartButton.collider = 'k'; restartButton.color = '#b8acfb';
     restartButton.text = "Replay Mission";
     restartButton.pos = { x: width / 2, y: height / 2 + 280 };
@@ -687,6 +737,9 @@ function draw() {
       missionStats.radiationDose = 12;
       missionStats.decisionsLog = [];
       panelsCleaned = false;
+      if (marsTrekButton) marsTrekButton.remove();
+      marsTrekButton = null;
+      selectedLocationKey = null;
       hideAllButtons();
       screen = 0;
       textAlign(CENTER);
@@ -698,7 +751,6 @@ function draw() {
 
 function drawResourceTracker() {
   push();
-
   rectMode(CORNER);
   fill(18, 10, 31, 210);
   stroke('#ff8c49');
@@ -737,6 +789,62 @@ function drawLiveNotificationWidget() {
   textSize(13);
   text(latestNotificationMsg, width - 355, 130, 310, 70);
   pop();
+}
+
+// Small Bottom-left Widget displaying chosen location & description once selected
+function drawBottomRightLocationWidget() {
+  if (!selectedLocationKey) return;
+
+  push();
+  rectMode(CORNER);
+  // Positioned neatly in the bottom right corner
+  fill(18, 10, 31, 220);
+  stroke('#ff8c49');
+  strokeWeight(2);
+  rect(10, height - 190, 340, 90, 10);
+
+  noStroke();
+  fill('#ff8c49');
+  textSize(14);
+  textAlign(LEFT, TOP);
+  let title = selectedLocationKey === "crater" ? "Gale Crater (Curiosity Site)" : "Vera Rubin Ridge (Sunny Ridge)";
+  text(`📍 ${title}`, 12, height - 180);
+
+  fill('#fcf7ee');
+  textSize(11);
+  let desc = selectedLocationKey === "crater" 
+    ? "Coordinates: 4.5895°S, 137.4417°E\n Diameter: 154 km. Clay-rich layers and ancient water basins explored by Curiosity."
+    : "Coordinates: 4.8°S, 137.4°E. \nHigh photovoltaic output and hematite-bearing bedrock.";
+  text(desc, 16, height - 155, 310, 50);
+
+  pop();
+
+  if (marsTrekButton) {
+    marsTrekButton.show();
+  }
+}
+
+// Creates the clickable HTML link button for NASA Mars Trek at the bottom right
+function setupMarsTrekButton() {
+  if (marsTrekButton) marsTretkButton.remove(); // safety guard
+
+  let linkUrl = selectedLocationKey === "crater" 
+    ? "https://trek.nasa.gov/mars/#v=0.1&x=144.31602252135553&y=-2.7839593452500027&z=5&p=urn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A104905&d=&locale=&b=mars&e=133.52744850385093%2C-10.342552954255272%2C155.10459653886014%2C4.774634263755266&sfz=&w="
+    : "https://trek.nasa.gov/mars/#v=0.1&x=137.6120191619876&y=-7.757652170717654&z=4&p=urn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A104905&d=&locale=&b=mars&e=116.03487112697837%2C-22.87483938872819%2C159.18916719699683%2C7.359535047292884&sfz=&w=";
+
+  marsTrekButton = createA(linkUrl, '🔍 Explore on NASA Mars Trek ↗', '_blank');
+  // Positioned directly inside the bottom-right widget box
+  marsTrekButton.position(width - 355, height - 110);
+  marsTrekButton.style('color', '#00ffcc');
+  marsTrekButton.style('font-family', 'monospace');
+  marsTrekButton.style('font-weight', 'bold');
+  marsTrekButton.style('text-decoration', 'none');
+  marsTrekButton.style('background', 'rgba(0, 40, 40, 0.9)');
+  marsTrekButton.style('border', '1px solid #00ffcc');
+  marsTrekButton.style('padding', '5px 10px');
+  marsTrekButton.style('border-radius', '4px');
+  marsTrekButton.style('font-size', '11px');
+  marsTrekButton.style('z-index', '1000');
 }
 
 function hideAllButtons() {
@@ -787,7 +895,7 @@ function updateLiveSpaceWeather() {
         ? latestNotif.messageIssueTime.replace("T", " ").substring(0, 16) + " UTC" 
         : "2026-10-10 12:00 UTC";
 
-      let rawBody = latestNotif.messageBody || "";
+      let rawBody = latestNotif.messageMessageBody || latestNotif.messageBody || "";
       let summaryText = rawBody.includes("## Summary:")
         ? rawBody.split("## Summary:")[1].split("##")[0]
         : rawBody;
@@ -801,7 +909,6 @@ function updateLiveSpaceWeather() {
     }
   }
 }
-
 
 function loadFallbackDonki() {
   donkiFlares = [

@@ -18,6 +18,8 @@ let liveFlareInfo = "Normal solar activity";
 let latestNotificationMsg = "NASA Space Weather: All clear.";
 let apiLoaded = false;
 
+// AI assistance has been used during the making of this script for trouble shooting and code generation in some areas.
+
 // Location & Mars Trek Data tracking
 let selectedLocationKey = null; // "crater" or "ridge"
 let marsTrekButton = null;     // HTML DOM link for bottom-right widget

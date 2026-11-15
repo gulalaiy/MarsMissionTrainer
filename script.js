@@ -17,7 +17,12 @@ let donkiFlares = [];
 let donkiNotifications = [];
 let liveFlareInfo = "Normal solar activity";
 let latestNotificationMsg = "NASA Space Weather: All clear.";
-let apiLoaded = false
+let apiLoaded = false;
+let selectedLocation = null; 
+let marsTrekLink;
+let notificationSummary = "";
+let notificationSpeed = "";
+let notificationTime = "";
 
 let screen = 0;
 let panelsCleaned = false; // Tracks solar panel cleaning state
@@ -73,23 +78,35 @@ function setup() {
   e3Button = new Sprite(-200, -200);
   restartButton = new Sprite(-200, -200);
 
-  // Fetching real data from NASA DONKI API
-  let apiKey = (typeof NASA_KEY !== 'undefined' && NASA_KEY !== "") ? NASA_KEY : "DEMO_KEY";
-
-  let flareUrl = `https://api.nasa.gov/DONKI/FLR?startDate=2026-01-01&endDate=2026-01-30&api_key=${apiKey}`;
-  let notifUrl = `https://api.nasa.gov/DONKI/notifications?startDate=2026-01-01&type=all&api_key=${apiKey}`;
+  // Fetching real data from NASA DONKI API (CCMC Endpoints with <=60 day range)
+  let flareUrl = "https://ccmc.gsfc.nasa.gov/DONKI-API/get/FLR?startDate=2026-10-01&endDate=2026-11-15";
+  let notifUrl = "https://ccmc.gsfc.nasa.gov/DONKI-API/get/notifications?startDate=2026-10-01&endDate=2026-11-15&type=all";
 
   loadJSON(flareUrl, (data) => {
-    if (data && data.length > 0) {
-      donkiFlares = data;
+    let flareArr = Array.isArray(data) ? data : Object.values(data);
+    if (flareArr && flareArr.length > 0) {
+      donkiFlares = flareArr;
+      apiLoaded = true;
+      updateLiveSpaceWeather();
+    } else {
+      loadFallbackDonki();
     }
+  }, (err) => {
+    loadFallbackDonki();
   });
 
   loadJSON(notifUrl, (data) => {
-    if (data && data.length > 0) {
-      donkiNotifications = data;
+    let notifArr = Array.isArray(data) ? data : Object.values(data);
+    if (notifArr && notifArr.length > 0) {
+      donkiNotifications = notifArr;
       apiLoaded = true;
       updateLiveSpaceWeather(); // Process the data once loaded
+    } else if (donkiNotifications.length === 0) {
+      loadFallbackDonki();
+    }
+  }, (err) => {
+    if (donkiNotifications.length === 0) {
+      loadFallbackDonki();
     }
   });
 }
@@ -100,11 +117,6 @@ function draw() {
   if (screen == 0) {
     background("#180B24");
     showStarfield();
-
-    fill('yellow');
-    textSize(14);
-    let keyStatus = (typeof NASA_KEY !== 'undefined') ? "Loaded: " + NASA_KEY : "UNDEFINED / NOT LINKED";
-    text("DEBUG Key Check: " + keyStatus, width/2, height/2);
 
     noStroke();
     fill('#ffe2ab');
@@ -136,6 +148,7 @@ function draw() {
     image(labandmaintBg, width / 2, height / 2, width, width / imgAspect);
 
     drawResourceTracker(); // Top-left resource tracker
+    drawLiveNotificationWidget(); // Top-right DONKI live notification widget
 
     fill('#ffffff');
     stroke('white');
@@ -202,6 +215,7 @@ function draw() {
     image(spectrometryBg, width / 2, height / 2, width, width / imgAspect);
 
     drawResourceTracker();
+    drawLiveNotificationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -219,10 +233,10 @@ function draw() {
     noStroke();
 
     fill('white');
-    textSize(25);
-    text("Astronauts use spectrometers to analyze rock mineral composition. Understanding iron oxide\n dust helps us determine surface habitability and locate potential water ice deposits \nbeneath the soil.", width / 2, height / 2 + 258);
+    textSize(22);
+    text("A spectrometer is used to disperse light into a spectrum that helps scientists study its physical \nand chemical properties like temperature, mass, and most importantly: chemical composition. Spectrometers \nare one of the sharpest tools for exploring and identifying samples from space. The Near Infrared Spectrograph \n(NIRSpectrograph) is designed to observe more than 100 objects simultaneously, making it highly efficient.", width / 2, height / 2 + 258);
 
-    next1Button.w = 260; next1Button.h = 61; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
+    next1Button.w = 260; next1Button.h = 58; next1Button.collider = 'k'; next1Button.color = '#ffe7b2';
     next1Button.text = "Continue to Event 1";
     next1Button.pos = { x: width / 2, y: height / 2 + 343 };
     next1Button.rotation = 0;
@@ -241,13 +255,14 @@ function draw() {
     image(marsBg, width / 2, height / 2, width, width / imgAspect);
 
     drawResourceTracker();
+    drawLiveNotificationWidget();
 
     fill('#ffffff');
     stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text(`DAY 10: Solar flare alert from Earth!\nLive Data: ${liveFlareInfo}`, width / 2, height / 2 - 420);
+    text(`DAY 10: Solar flare alert from Earth!\n\nLive Data: ${liveFlareInfo}`, width / 2, height / 2 - 390);
     noStroke();
 
     image(alertAstronautImg, 140, height / 2 - 80, 350, 400);
@@ -304,6 +319,7 @@ function draw() {
     image(foodBg, width / 2, height / 2, width, width / imgAspect);
 
     drawResourceTracker();
+    drawLiveNotificationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -343,6 +359,7 @@ function draw() {
     image(labandmaintBg, width / 2, height / 2, width, width / imgAspect);
 
     drawResourceTracker();
+    drawLiveNotificationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -408,6 +425,7 @@ function draw() {
     image(currentPanelBg, width / 2, height / 2, width, width / imgAspect);
 
     drawResourceTracker();
+    drawLiveNotificationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -463,6 +481,7 @@ function draw() {
     image(roverBg, width / 2, height / 2, width, width / imgAspect);
 
     drawResourceTracker();
+    drawLiveNotificationWidget();
 
     fill('#ffffff');
     stroke('white');
@@ -505,13 +524,14 @@ function draw() {
     image(marsBg, width / 2, height / 2, width, width / imgAspect);
 
     drawResourceTracker();
+    drawLiveNotificationWidget();
 
     fill('#ffffff');
     stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("DAY 30: Final mission window. Fuel and food for one trip.", width / 2, height / 2 - 420);
+    text("DAY 33: Final mission window.", width / 2, height / 2 - 420);
     noStroke();
 
     image(happyAstronautImg, 140, height / 2 - 80, 340, 390);
@@ -641,10 +661,10 @@ function draw() {
     yOffset += 22;
 
     let referenceList = [
-      "NASA Mars Trek: Surface terrain, elevation, and landing site data.",
+      "Spectrometry Info: https://science.nasa.gov/mission/webb/nirspec/",
+      "NASA Mars Trek: Landing site data.",
       "NASA RadLab (OSDR): ISS baseline radiation dosimetry and absorbed dose rates.",
       "NASA DONKI: Space weather alerts, solar flares, and CME tracking.",
-      "NASA OSDR (Open Science Data Repository): Space biology and human health trade-offs."
     ];
 
     for (let ref of referenceList) {
@@ -678,21 +698,44 @@ function draw() {
 
 function drawResourceTracker() {
   push();
-  noStroke();
-  fill(18, 10, 31, 200);
+
   rectMode(CORNER);
-  rect(30, 30, 210, 115, 10);
+  fill(18, 10, 31, 210);
+  stroke('#ff8c49');
+  strokeWeight(2);
+  rect(10, 75, 130, 120, 10);
+  noStroke();
 
   fill('#fcf7ee');
-  textSize(16);
+  textSize(13);
   textAlign(LEFT, TOP);
   
-  let x = 10;
-  let y = 110;
+  let x = 18;
+  let y = 93;
   text(`Power: ${missionStats.power}%`, x, y);
   text(`Shields: ${missionStats.shielding}%`, x, y + 25);
   text(`Supplies: ${missionStats.supplies}%`, x, y + 50);
   text(`Radiation: ${missionStats.radiationDose} mSv`, x, y + 75);
+  pop();
+}
+
+function drawLiveNotificationWidget() {
+  push();
+  rectMode(CORNER);
+  fill(18, 10, 31, 210);
+  stroke('#ff8c49');
+  strokeWeight(2);
+  rect(width - 370, 75, 340, 120, 10);
+
+  noStroke();
+  fill('#ffbe82');
+  textSize(15);
+  textAlign(LEFT, TOP);
+  text("NASA DONKI LIVE TELEMETRY", width - 355, 100);
+
+  fill('#fcf7ee');
+  textSize(13);
+  text(latestNotificationMsg, width - 355, 130, 310, 70);
   pop();
 }
 
@@ -727,16 +770,47 @@ function showStarfield() {
 
 function updateLiveSpaceWeather() {
   if (apiLoaded) {
-    // Pick a random flare from the array for replay variety
+    // 1. Handle Flares matching the October window
     if (donkiFlares.length > 0) {
       let randomFlare = random(donkiFlares);
-      liveFlareInfo = `Class ${randomFlare.classType} Flare (Peak: ${randomFlare.beginTime})`;
+      let fClass = randomFlare.classType || "M1.0";
+      let peakT = randomFlare.peakTime ? randomFlare.peakTime.replace("T", " ").substring(0, 16) : "2026-10-10 14:30";
+      liveFlareInfo = `Class ${fClass} Flare (Peak: ${peakT} UTC)`;
     }
-    // Grab the most recent notification message
+
+    // 2. Handle Notifications matching the October window
     if (donkiNotifications.length > 0) {
-      let latestNotif = donkiNotifications[donkiNotifications.length - 1];
-      // Clean up the HTML tags that DONKI notifications sometimes contain in their message text
-      latestNotificationMsg = latestNotif.messageBody.replace(/<[^>]*>/g, "").substring(0, 75) + "...";
+      // Pick the latest notification within that window (or index 0)
+      let latestNotif = donkiNotifications[0];
+      let mType = latestNotif.messageType || "FLR";
+      let issueTime = latestNotif.messageIssueTime 
+        ? latestNotif.messageIssueTime.replace("T", " ").substring(0, 16) + " UTC" 
+        : "2026-10-10 12:00 UTC";
+
+      let rawBody = latestNotif.messageBody || "";
+      let summaryText = rawBody.includes("## Summary:")
+        ? rawBody.split("## Summary:")[1].split("##")[0]
+        : rawBody;
+
+      summaryText = summaryText.replace(/<[^>]*>/g, "").replace(/#/g, "").replace(/\s+/g, " ").trim();
+      if (summaryText.length > 95) {
+        summaryText = summaryText.substring(0, 92) + "...";
+      }
+
+      latestNotificationMsg = `[${mType}] ${issueTime}\n${summaryText}`;
     }
   }
+}
+
+
+function loadFallbackDonki() {
+  donkiFlares = [
+    { classType: "X1.8", beginTime: "2026-10-14T11:20Z" },
+    { classType: "M4.2", beginTime: "2026-10-22T06:45Z" }
+  ];
+  donkiNotifications = [
+    { messageBody: "Space Weather Message: High solar activity detected. Elevated radiation alert active for Mars sector." }
+  ];
+  apiLoaded = true;
+  updateLiveSpaceWeather();
 }

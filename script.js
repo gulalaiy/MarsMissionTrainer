@@ -766,13 +766,18 @@ function mousePressed(event) {
   let clientY = event && Number.isFinite(event.clientY) ? event.clientY : mouseY + bounds.top;
   let clickX = (clientX - bounds.left) * width / bounds.width;
   let clickY = (clientY - bounds.top) * height / bounds.height;
-  let allBtns = [
-    enterButton, a1Button, a2Button, next1Button,
-    b1Button, b2Button, next2Button,
-    c1Button, c2Button, next3Button,
-    d1Button, d2Button, next4Button,
-    e1Button, e2Button, e3Button, restartButton
-  ];
+  let allBtns;
+  if (screen === 0) allBtns = [enterButton];
+  else if (screen === 1) allBtns = [a1Button, a2Button];
+  else if (screen === 1.5 || screen === 2) allBtns = [next1Button];
+  else if (screen === 3) allBtns = [b1Button, b2Button];
+  else if (screen === 4) allBtns = [next2Button];
+  else if (screen === 5) allBtns = [c1Button, c2Button];
+  else if (screen === 6) allBtns = [next3Button];
+  else if (screen === 7) allBtns = [next4Button];
+  else if (screen === 9) allBtns = [e1Button, e2Button, e3Button];
+  else if (screen >= 10 && screen <= 12) allBtns = [restartButton];
+  else allBtns = [];
 
   for (let button of allBtns) {
     if (button && Math.abs(clickX - button.x) <= button.w / 2 &&

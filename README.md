@@ -1,14 +1,14 @@
-# 🚀 Sol 33: Mars Mission Simulator
+# Sol 33: Mars Mission Simulator
 
 An interactive, web-based resource management and survival simulator built with **p5.js** and **p5play**. Step into the boots of an astronaut leading a two-person crew on a 33-day mission across the Martian surface, balancing real-world planetary hazards, scientific discovery, and crew survival.
 
 ---
 
-## 🌌 Overview
+## Overview
 
 Surviving on Mars requires tough trade-offs. In **Sol 33**, players navigate critical mission milestones—from selecting an optimal landing site and analyzing Martian soil samples to enduring solar flares and severe dust storms. Every choice directly impacts your crew's **Power**, **Radiation Shielding**, **Supplies**, and cumulative **Radiation Dose (mSv)**, culminating in one of three unique mission endings and a complete scientific log.
 
-### ✨ Key Features
+### Key Features
 * **Strategic Resource Management:** Balance four vital survival metrics (`Power`, `Shields`, `Supplies`, and `Radiation`) across 33 simulated Martian days (sols).
 * **Authentic Landing Sites:** Choose between **Vera Rubin Ridge (Sunny Ridge)** for high photovoltaic output or **Gale Crater (Crater Bowl)** for natural geological radiation shielding—complete with direct links to explore the terrain on **NASA Mars Trek**.
 * **Live Space Weather Telemetry:** Integrates live solar flare and space weather notification data via the **NASA CCMC DONKI API** (with automatic fallback telemetry for offline resilience).
@@ -17,7 +17,7 @@ Surviving on Mars requires tough trade-offs. In **Sol 33**, players navigate cri
 
 ---
 
-## 🛠️ Tech Stack & Data Sources
+## Tech Stack & Data Sources
 
 * **Core Framework:** HTML5 Canvas, JavaScript (ES6+), [p5.js](https://p5js.org/), and [p5play](https://p5play.org/)
 * **NASA Open Data & APIs:**
@@ -50,7 +50,7 @@ mars-mission-simulator/
 
 ---
 
-## 🎮 How to Run Locally
+## How to Run Locally
 
 1. **Clone the repository:**
    ```bash
@@ -67,7 +67,7 @@ mars-mission-simulator/
 
 ---
 
-## 🚀 Future Roadmap
+## Future Roadmap
 * **Dynamic Random Events:** Expand the DONKI API integration so live flare classes (`M-class` vs. `X-class`) dynamically scale radiation penalties.
 * **Audio & Ambient Soundscapes:** Add Martian wind ambience, rover telemetry beeps, and solar storm alarms.
 * **Mobile & Responsive Scaling:** Add dynamic canvas scaling for seamless play on tablets and mobile viewports.

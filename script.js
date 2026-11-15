@@ -24,6 +24,7 @@ let marsTrekButton = null;     // HTML DOM link for bottom-right widget
 
 let screen = 0;
 let panelsCleaned = false; // Tracks solar panel cleaning state
+let pressedButton = null;
 
 // Mission Resources & Stats Tracker
 let missionStats = {
@@ -138,7 +139,7 @@ function draw() {
     enterButton.text = "Initiate Training";
     enterButton.pos = { x: width / 2, y: height / 2 + 130 };
 
-    if (enterButton.mouse.presses()) {
+    if (buttonPressed(enterButton)) {
       hideAllButtons();
       screen = 1; 
     }
@@ -186,7 +187,7 @@ function draw() {
     a2Button.pos = { x: width / 2 + 240, y: height / 2 + 330 };
     a2Button.rotation = 0;
 
-    if (a1Button.mouse.presses()) {
+    if (buttonPressed(a1Button)) {
       selectedLocationKey = "ridge";
       setupMarsTrekButton();
       missionStats.power = min(100, max(0, missionStats.power + 15)); // Capped!
@@ -199,7 +200,7 @@ function draw() {
       });
       hideAllButtons();
       screen = 1.5;
-    } else if (a2Button.mouse.presses()) {
+    } else if (buttonPressed(a2Button)) {
       selectedLocationKey = "crater";
       setupMarsTrekButton();
       missionStats.power -= 10;
@@ -246,7 +247,7 @@ function draw() {
     next1Button.pos = { x: width / 2, y: height / 2 + 320 };
     next1Button.rotation = 0;
 
-    if (next1Button.mouse.presses()) {
+    if (buttonPressed(next1Button)) {
       hideAllButtons();
       screen = 2;
     }
@@ -287,7 +288,7 @@ function draw() {
     next1Button.pos = { x: width / 2, y: height / 2 + 350 };
     next1Button.rotation = 0;
 
-    if (next1Button.mouse.presses()) {
+    if (buttonPressed(next1Button)) {
       hideAllButtons();
       screen = 3; 
     }
@@ -335,7 +336,7 @@ function draw() {
     b2Button.pos = { x: width / 2 + 230, y: height / 2 + 320 };
     b2Button.rotation = 0;
 
-    if (b1Button.mouse.presses()) {
+    if (buttonPressed(b1Button)) {
       missionStats.power = min(100, max(0, missionStats.power - 20)); // Capped!
       missionStats.shielding += 10;
       missionStats.decisionsLog.push({
@@ -345,7 +346,7 @@ function draw() {
       });
       hideAllButtons();
       screen = 4;
-    } else if (b2Button.mouse.presses()) {
+    } else if (buttonPressed(b2Button)) {
       missionStats.radiationDose += 12;
       missionStats.supplies -= 5;
       missionStats.decisionsLog.push({
@@ -398,7 +399,7 @@ function draw() {
     next2Button.pos = { x: width / 2, y: height / 2 + 355 };
     next2Button.rotation = 0;
 
-    if (next2Button.mouse.presses()) {
+    if (buttonPressed(next2Button)) {
       hideAllButtons();
       screen = 5; 
     }
@@ -447,7 +448,7 @@ function draw() {
     c2Button.pos = { x: width / 2 + 200, y: height / 2 + 330};
     c2Button.rotation = 0;
 
-    if (c1Button.mouse.presses()) {
+    if (buttonPressed(c1Button)) {
       missionStats.power = min(100, max(0, missionStats.power + 20)); // Capped!
       missionStats.supplies -= 5;
       missionStats.decisionsLog.push({
@@ -457,7 +458,7 @@ function draw() {
       });
       hideAllButtons();
       screen = 6;
-    } else if (c2Button.mouse.presses()) {
+    } else if (buttonPressed(c2Button)) {
       missionStats.power = min(100, max(0, missionStats.power - 25)); // Capped!
       missionStats.supplies -= 10;
       missionStats.decisionsLog.push({
@@ -511,7 +512,7 @@ function draw() {
     next3Button.pos = { x: width / 2, y: height / 2 + 335 };
     next3Button.rotation = 0;
 
-    if (next3Button.mouse.presses()) {
+    if (buttonPressed(next3Button)) {
       if (!panelsCleaned) {
         panelsCleaned = true;
         missionStats.power = min(100, max(0, missionStats.power + 25)); // Capped at 100 max!
@@ -566,7 +567,7 @@ function draw() {
     next4Button.pos = { x: width / 2, y: height / 2 + 337 };
     next4Button.rotation = 0;
 
-    if (next4Button.mouse.presses()) {
+    if (buttonPressed(next4Button)) {
       hideAllButtons();
       screen = 9; 
     }
@@ -620,7 +621,7 @@ function draw() {
     e3Button.pos = { x: width / 2 + 330, y: height / 2 + 320 };
     e3Button.rotation = 0;
 
-    if (e1Button.mouse.presses()) {
+    if (buttonPressed(e1Button)) {
       missionStats.supplies -= 20;
       missionStats.decisionsLog.push({
         decision: "Final Window: Far Cliffs Traverse",
@@ -629,7 +630,7 @@ function draw() {
       });
       hideAllButtons();
       screen = 10; 
-    } else if (e2Button.mouse.presses()) {
+    } else if (buttonPressed(e2Button)) {
       missionStats.supplies -= 10;
       missionStats.decisionsLog.push({
         decision: "Final Window: Local Base Trip",
@@ -638,7 +639,7 @@ function draw() {
       });
       hideAllButtons();
       screen = 11; 
-    } else if (e3Button.mouse.presses()) {
+    } else if (buttonPressed(e3Button)) {
       missionStats.supplies += 5;
       missionStats.decisionsLog.push({
         decision: "Final Window: Immediate Return",
@@ -734,7 +735,7 @@ function draw() {
     restartButton.pos = { x: width / 2, y: height / 2 + 280 };
     restartButton.rotation = 0;
 
-    if (restartButton.mouse.presses()) {
+    if (buttonPressed(restartButton)) {
       missionStats.power = 100;
       missionStats.shielding = 80;
       missionStats.supplies = 100;
@@ -752,6 +753,41 @@ function draw() {
 }
 
 /* HELPER FUNCTIONS */
+
+// Store clicks in canvas coordinates so CSS sizing/scaling does not offset sprite hit tests.
+function mousePressed(event) {
+  pressedButton = null;
+  let canvasElement = document.querySelector('canvas');
+  if (!canvasElement) return;
+
+  let bounds = canvasElement.getBoundingClientRect();
+  if (!bounds.width || !bounds.height) return;
+  let clientX = event && Number.isFinite(event.clientX) ? event.clientX : mouseX + bounds.left;
+  let clientY = event && Number.isFinite(event.clientY) ? event.clientY : mouseY + bounds.top;
+  let clickX = (clientX - bounds.left) * width / bounds.width;
+  let clickY = (clientY - bounds.top) * height / bounds.height;
+  let allBtns = [
+    enterButton, a1Button, a2Button, next1Button,
+    b1Button, b2Button, next2Button,
+    c1Button, c2Button, next3Button,
+    d1Button, d2Button, next4Button,
+    e1Button, e2Button, e3Button, restartButton
+  ];
+
+  for (let button of allBtns) {
+    if (button && Math.abs(clickX - button.x) <= button.w / 2 &&
+        Math.abs(clickY - button.y) <= button.h / 2) {
+      pressedButton = button;
+      break;
+    }
+  }
+}
+
+function buttonPressed(button) {
+  if (pressedButton !== button) return false;
+  pressedButton = null;
+  return true;
+}
 
 function drawResourceTracker() {
   push();

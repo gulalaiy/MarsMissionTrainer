@@ -2,6 +2,8 @@
 
 An interactive, web-based resource management and survival simulator built with **p5.js** and **p5play**. Step into the boots of an astronaut leading a two-person crew on a 33-day mission across the Martian surface, balancing real-world planetary hazards, scientific discovery, and crew survival.
 
+Game runthrough: https://youtu.be/qUU1vlqp7aM
+
 ---
 
 ## Overview

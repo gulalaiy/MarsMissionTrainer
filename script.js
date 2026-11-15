@@ -13,6 +13,11 @@ let restartButton;
 let marsBg, labandmaintBg, foodBg, spectrometryBg, roverBg, cleanPanelsBg, dirtyPanelsBg;
 let idleAstronaut1, idleAstronaut2;
 let idleAstronaut1Img, idleAstronaut2Img, alertAstronautImg, happyAstronautImg, worriedAstronautImg;
+let donkiFlares = [];
+let donkiNotifications = [];
+let liveFlareInfo = "Normal solar activity";
+let latestNotificationMsg = "NASA Space Weather: All clear.";
+let apiLoaded = false
 
 let screen = 0;
 let panelsCleaned = false; // Tracks solar panel cleaning state
@@ -67,6 +72,26 @@ function setup() {
   e2Button = new Sprite(-200, -200);
   e3Button = new Sprite(-200, -200);
   restartButton = new Sprite(-200, -200);
+
+  // Fetching real data from NASA DONKI API
+  let apiKey = (typeof NASA_KEY !== 'undefined' && NASA_KEY !== "") ? NASA_KEY : "DEMO_KEY";
+
+  let flareUrl = `https://api.nasa.gov/DONKI/FLR?startDate=2026-01-01&endDate=2026-01-30&api_key=${apiKey}`;
+  let notifUrl = `https://api.nasa.gov/DONKI/notifications?startDate=2026-01-01&type=all&api_key=${apiKey}`;
+
+  loadJSON(flareUrl, (data) => {
+    if (data && data.length > 0) {
+      donkiFlares = data;
+    }
+  });
+
+  loadJSON(notifUrl, (data) => {
+    if (data && data.length > 0) {
+      donkiNotifications = data;
+      apiLoaded = true;
+      updateLiveSpaceWeather(); // Process the data once loaded
+    }
+  });
 }
 
 /* DRAW LOOP REPEATS */
@@ -75,6 +100,11 @@ function draw() {
   if (screen == 0) {
     background("#180B24");
     showStarfield();
+
+    fill('yellow');
+    textSize(14);
+    let keyStatus = (typeof NASA_KEY !== 'undefined') ? "Loaded: " + NASA_KEY : "UNDEFINED / NOT LINKED";
+    text("DEBUG Key Check: " + keyStatus, width/2, height/2);
 
     noStroke();
     fill('#ffe2ab');
@@ -88,7 +118,7 @@ function draw() {
     enterButton.w = 240;
     enterButton.h = 80;
     enterButton.collider = 'k';
-    enterButton.color = '#ffb067';
+    enterButton.color = '#b8acfb';
     enterButton.text = "Initiate Training";
     enterButton.pos = { x: width / 2, y: height / 2 + 130 };
 
@@ -140,7 +170,7 @@ function draw() {
     a2Button.rotation = 0;
 
     if (a1Button.mouse.presses()) {
-      missionStats.power += 15;
+      missionStats.power = min(100, max(0, missionStats.power + 15)); // Capped!
       missionStats.shielding -= 15;
       missionStats.radiationDose += 6;
       missionStats.decisionsLog.push({
@@ -217,7 +247,7 @@ function draw() {
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("DAY 10: Solar flare alert from Earth!", width / 2, height / 2 - 420);
+    text(`DAY 10: Solar flare alert from Earth!\nLive Data: ${liveFlareInfo}`, width / 2, height / 2 - 420);
     noStroke();
 
     image(alertAstronautImg, 140, height / 2 - 80, 350, 400);
@@ -244,7 +274,7 @@ function draw() {
     b2Button.rotation = 0;
 
     if (b1Button.mouse.presses()) {
-      missionStats.power -= 20;
+      missionStats.power = min(100, max(0, missionStats.power - 20)); // Capped!
       missionStats.shielding += 10;
       missionStats.decisionsLog.push({
         decision: "Solar Flare: Shelter in Storage",
@@ -347,7 +377,7 @@ function draw() {
     c2Button.rotation = 0;
 
     if (c1Button.mouse.presses()) {
-      missionStats.power += 20;
+      missionStats.power = min(100, max(0, missionStats.power + 20)); // Capped!
       missionStats.supplies -= 5;
       missionStats.decisionsLog.push({
         decision: "Dust Storm: Save Power",
@@ -357,7 +387,7 @@ function draw() {
       hideAllButtons();
       screen = 6;
     } else if (c2Button.mouse.presses()) {
-      missionStats.power -= 25;
+      missionStats.power = min(100, max(0, missionStats.power - 25)); // Capped!
       missionStats.supplies -= 10;
       missionStats.decisionsLog.push({
         decision: "Dust Storm: Keep Science On",
@@ -411,7 +441,7 @@ function draw() {
     if (next3Button.mouse.presses()) {
       if (!panelsCleaned) {
         panelsCleaned = true;
-        missionStats.power = min(100, missionStats.power + 25);
+        missionStats.power = min(100, max(0, missionStats.power + 25)); // Capped at 100 max!
         missionStats.decisionsLog.push({
           decision: "Maintenance: Cleaning Panels",
           tradeoff: "+25% Power Restored",
@@ -548,33 +578,86 @@ function draw() {
     background("#180B24");
     showStarfield();
 
-    let endingText = "";
-    if (screen == 10) endingText = "ENDING: SCIENCE STAR\nGreat discoveries made, tight resources managed!";
-    if (screen == 11) endingText = "ENDING: STEADY EXPLORER\nBalanced mission executed with a safe return!";
-    if (screen == 12) endingText = "ENDING: SAFETY FIRST\nHealthy crew returned home with careful resource use!";
+    let endingTitle = "";
+    let endingDesc = "";
+    if (screen == 10) {
+      endingTitle = "ENDING: SCIENCE STAR";
+      endingDesc = "Great discoveries made, tight resources managed!";
+    }
+    if (screen == 11) {
+      endingTitle = "ENDING: STEADY EXPLORER";
+      endingDesc = "Balanced mission executed with a safe return!";
+    }
+    if (screen == 12) {
+      endingTitle = "ENDING: SAFETY FIRST";
+      endingDesc = "Healthy crew returned home with careful resource use!";
+    }
 
-    // Direct text rendering without border box
-    fill('#ffe2ab');
+    // Translucent box container for the evaluation report
+    fill(18, 10, 31, 200);
+    stroke('#ff8c49');
+    strokeWeight(3);
+    rectMode(CENTER);
+    rect(width / 2, height / 2 - 10, width - 200, height - 300, 15);
     noStroke();
-    textSize(28);
-    textAlign(CENTER, CENTER);
-    text(endingText + "\n\nWhat would you trade differently next time?", width / 2, height / 2 - 140);
 
-    // Display decision log & NASA citations beneath
-    textSize(16);
+    // Ending Title (Bolder & Larger)
+    fill('#ffb067');
+    textSize(35);
+    textStyle(BOLD);
     textAlign(CENTER, TOP);
-    
-    let logSummary = "Mission Log & NASA Citations:\n";
+    text(endingTitle, width / 2, height / 2 - 300);
+
+    // Ending Description & Question (Normal weight)
+    textStyle(NORMAL);
+    fill('#ffe2ab');
+    textSize(19);
+    text(endingDesc + "\nWhat would you trade differently next time?", width / 2, height / 2 - 250);
+
+    // Layout coordinates inside the box for logs and citations
+    let startX = width / 2 - 500;
+    let startY = height / 2 - 165;
+
+    // 1. Decision Log Section
+    fill('#ffffff');
+    textSize(20);
+    textAlign(LEFT, TOP);
+    text("Your Decision Log:", startX, startY);
+
+    let yOffset = startY + 22;
     for (let i = 0; i < missionStats.decisionsLog.length; i++) {
       let log = missionStats.decisionsLog[i];
-      logSummary += `• ${log.decision} (${log.tradeoff}) — [${log.source}]\n`;
+      fill('#ffbe82');
+      textSize(18);
+      text(`• ${log.decision}: ${log.tradeoff}`, startX, yOffset);
+      yOffset += 24;
     }
-    text(logSummary, width / 2, height / 2 + 20);
 
-    // Replay Mission Button with original format
-    restartButton.w = 220; restartButton.h = 70; restartButton.collider = 'k'; restartButton.color = '#b8acfb';
+    // 2. Separate NASA Citation / Reference List Section
+    yOffset += 10;
+    fill('#ffffff');
+    textSize(20);
+    text("NASA Data & Source Citations:", startX, yOffset);
+    yOffset += 22;
+
+    let referenceList = [
+      "NASA Mars Trek: Surface terrain, elevation, and landing site data.",
+      "NASA RadLab (OSDR): ISS baseline radiation dosimetry and absorbed dose rates.",
+      "NASA DONKI: Space weather alerts, solar flares, and CME tracking.",
+      "NASA OSDR (Open Science Data Repository): Space biology and human health trade-offs."
+    ];
+
+    for (let ref of referenceList) {
+      fill('#a0a0c0');
+      textSize(18);
+      text(`• ${ref}`, startX + 10, yOffset);
+      yOffset += 20;
+    }
+
+    // Replay Mission Button
+    restartButton.w = 220; restartButton.h = 65; restartButton.collider = 'k'; restartButton.color = '#b8acfb';
     restartButton.text = "Replay Mission";
-    restartButton.pos = { x: width / 2, y: height / 2 + 230 };
+    restartButton.pos = { x: width / 2, y: height / 2 + 280 };
     restartButton.rotation = 0;
 
     if (restartButton.mouse.presses()) {
@@ -586,6 +669,7 @@ function draw() {
       panelsCleaned = false;
       hideAllButtons();
       screen = 0;
+      textAlign(CENTER);
     }
   }
 }
@@ -597,14 +681,14 @@ function drawResourceTracker() {
   noStroke();
   fill(18, 10, 31, 200);
   rectMode(CORNER);
-  rect(30, 30, 240, 130, 10);
+  rect(30, 30, 210, 115, 10);
 
-  fill('#ffe2ab');
-  textSize(18);
+  fill('#fcf7ee');
+  textSize(16);
   textAlign(LEFT, TOP);
   
-  let x = 45;
-  let y = 45;
+  let x = 10;
+  let y = 110;
   text(`Power: ${missionStats.power}%`, x, y);
   text(`Shields: ${missionStats.shielding}%`, x, y + 25);
   text(`Supplies: ${missionStats.supplies}%`, x, y + 50);
@@ -638,5 +722,21 @@ function showStarfield() {
   for (let i = 0; i < starCoords.length; i++) {
     let sSize = (i % 3 === 0) ? 5 : (i % 2 === 0 ? 4 : 3);
     circle(starCoords[i][0], starCoords[i][1], sSize);
+  }
+}
+
+function updateLiveSpaceWeather() {
+  if (apiLoaded) {
+    // Pick a random flare from the array for replay variety
+    if (donkiFlares.length > 0) {
+      let randomFlare = random(donkiFlares);
+      liveFlareInfo = `Class ${randomFlare.classType} Flare (Peak: ${randomFlare.beginTime})`;
+    }
+    // Grab the most recent notification message
+    if (donkiNotifications.length > 0) {
+      let latestNotif = donkiNotifications[donkiNotifications.length - 1];
+      // Clean up the HTML tags that DONKI notifications sometimes contain in their message text
+      latestNotificationMsg = latestNotif.messageBody.replace(/<[^>]*>/g, "").substring(0, 75) + "...";
+    }
   }
 }

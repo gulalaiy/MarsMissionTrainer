@@ -10,7 +10,7 @@ let d1Button, d2Button;
 let next4Button;
 let e1Button, e2Button, e3Button;
 let restartButton;
-let marsBg, labandmaintBg, foodBg, spectrometryBg, roverBg, cleanPanelsBg, dirtyPanelsBg, craterBg, ridgeBg;
+let marsBg, labandmaintBg, foodBg, spectrometryBg, roverBg, cleanPanelsBg, dirtyPanelsBg, craterBg, ridgeBg, logo;
 let idleAstronaut1Img, idleAstronaut2Img, alertAstronautImg, happyAstronautImg, worriedAstronautImg;
 let donkiFlares = [];
 let donkiNotifications = [];
@@ -44,6 +44,7 @@ function preload() {
   cleanPanelsBg = loadImage("assets/cleanpanels.png");
   craterBg = loadImage("assets/crater.jpg");
   ridgeBg = loadImage("assets/sunnyridge.jpg");
+  logo = loadImage("assets/sol33.png");
   idleAstronaut1Img = loadImage("assets/idleastronaut1.png");
   idleAstronaut2Img = loadImage("assets/idleastronaut2.png");
   alertAstronautImg = loadImage("assets/alertastronaut.png");
@@ -118,13 +119,16 @@ function draw() {
     background("#180B24");
     showStarfield();
 
+    imageMode(CENTER);
+    image(logo, width / 2 - 7, height / 2 - 300, 300, 190);
+
     noStroke();
     fill('#ffe2ab');
     textSize(30);
     text(
       "You and your fellow astronaut have a 33-day Mars mission\ncoming up to explore and conduct research on the surface of Mars...\nbut are you ready for it?\nLet's see if you have what it takes to manage resources and get through\na 33-day mission to Mars through this simulation!",
       width / 2,
-      height / 2 - 160
+      height / 2 - 130
     );
 
     enterButton.w = 240;

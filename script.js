@@ -15,13 +15,22 @@ let idleAstronaut1, idleAstronaut2;
 let idleAstronaut1Img, idleAstronaut2Img, alertAstronautImg, happyAstronautImg, worriedAstronautImg;
 
 let screen = 0;
-let panelsCleaned = false;
+let panelsCleaned = false; // Tracks solar panel cleaning state
+
+// Mission Resources & Stats Tracker
+let missionStats = {
+  power: 100,          // Percentage (%)
+  shielding: 80,       // Radiation protection level (%)
+  supplies: 100,       // Food/Water rations (%)
+  radiationDose: 12,   // mSv
+  decisionsLog: []     // Stores history for final report & NASA sources
+};
 
 function preload() {
   marsBg = loadImage("assets/marsbg.png");
   labandmaintBg = loadImage("assets/labandmaint.png");
   foodBg = loadImage("assets/food.png");
-  spectrometryBg = loadImage("assets/spectrometry.png")
+  spectrometryBg = loadImage("assets/spectrometry.png");
   roverBg = loadImage("assets/rovercheck.png");
   dirtyPanelsBg = loadImage("assets/dirtypanels.png");
   cleanPanelsBg = loadImage("assets/cleanpanels.png");
@@ -39,7 +48,6 @@ function setup() {
   textAlign(CENTER);
   textSize(25);
   angleMode(DEGREES);
-
 
   // Create buttons (positioned off-screen initially)
   enterButton = new Sprite(-200, -200);
@@ -61,28 +69,22 @@ function setup() {
   restartButton = new Sprite(-200, -200);
 }
 
- 
-
 /* DRAW LOOP REPEATS */
 function draw() {
   // HOMESCREEN (Screen 0)
   if (screen == 0) {
-
-    // Display homescreen
     background("#180B24");
     showStarfield();
 
-
     noStroke();
     fill('#ffe2ab');
-    textSize(30)
+    textSize(30);
     text(
       "You and your fellow astronaut have a 33-day Mars mission\ncoming up to explore and conduct research on the surface of Mars...\nbut are you ready for it?\nLet's see if you have what it takes to manage resources and get through\na 33-day mission to Mars through this simulation!",
       width / 2,
       height / 2 - 160
     );
 
-    // Display Enter Button
     enterButton.w = 240;
     enterButton.h = 80;
     enterButton.collider = 'k';
@@ -92,39 +94,30 @@ function draw() {
 
     if (enterButton.mouse.presses()) {
       hideAllButtons();
-      screen = 1; // Decision 1
+      screen = 1; 
     }
   }
 
   // SCREEN 1: DECISION 1 (Base Camp Location)
   else if (screen == 1) {
-    // 1. Set a solid background color to fill the empty borders instead of stretching
     background('#180B24'); 
-
-    // 2. Draw the background image while keeping its exact aspect ratio
     imageMode(CENTER);
-    
-    // Calculate proportional height based on your canvas width to avoid squishing
     let imgAspect = labandmaintBg.width / labandmaintBg.height;
-    let drawWidth = width; // or set a custom max width like 1200
-    let drawHeight = drawWidth / imgAspect;
-    
-    image(labandmaintBg, width / 2, height / 2, drawWidth, drawHeight);
+    image(labandmaintBg, width / 2, height / 2, width, width / imgAspect);
+
+    drawResourceTracker(); // Top-left resource tracker
 
     fill('#ffffff');
-    stroke('white')
+    stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
     text("DAY 1: Landing", width / 2, height / 2 - 420);
     noStroke();
 
-    // Display astronauts
-    image(idleAstronaut1Img, 250, height / 2 + 25, 750, 880); // x, y, width, height
+    image(idleAstronaut1Img, 250, height / 2 + 25, 750, 880);
     image(idleAstronaut2Img, width - 250, height / 2 + 77, 750, 880);
 
-
-    // Transculent box
     fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -146,36 +139,48 @@ function draw() {
     a2Button.pos = { x: width / 2 + 240, y: height / 2 + 330 };
     a2Button.rotation = 0;
 
-    if (a1Button.mouse.presses() || a2Button.mouse.presses()) {
+    if (a1Button.mouse.presses()) {
+      missionStats.power += 15;
+      missionStats.shielding -= 15;
+      missionStats.radiationDose += 6;
+      missionStats.decisionsLog.push({
+        decision: "Base Camp: Sunny Ridge",
+        tradeoff: "+15% Power, -15% Shielding, +6 Radiation",
+        source: "NASA Mars Trek & Curiosity RAD Data"
+      });
       hideAllButtons();
-      screen = 2; // Timeskip 1 & Educational Task
+      screen = 2;
+    } else if (a2Button.mouse.presses()) {
+      missionStats.power -= 10;
+      missionStats.shielding += 20;
+      missionStats.radiationDose -= 4;
+      missionStats.decisionsLog.push({
+        decision: "Base Camp: Crater Bowl",
+        tradeoff: "-10% Power, +20% Shielding, -4 Radiation",
+        source: "NASA Mars Trek Elevation Data"
+      });
+      hideAllButtons();
+      screen = 2;
     }
   }
 
   // SCREEN 2: TIMESKIP 1 & EDUCATIONAL TASK (Days 2 to 9)
   else if (screen == 2) {
-    // 1. Set a solid background color to fill the empty borders instead of stretching
     background('#180B24'); 
-
-    // 2. Draw the background image while keeping its exact aspect ratio
     imageMode(CENTER);
-    
-    // Calculate proportional height based on your canvas width to avoid squishing
     let imgAspect = spectrometryBg.width / spectrometryBg.height;
-    let drawWidth = width; // or set a custom max width like 1200
-    let drawHeight = drawWidth / imgAspect;
+    image(spectrometryBg, width / 2, height / 2, width, width / imgAspect);
 
-    image(spectrometryBg, width / 2, height / 2, drawWidth, drawHeight);
+    drawResourceTracker();
 
     fill('#ffffff');
-    stroke('white')
+    stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("Day 5 Task: Scan Martian Samples",  width / 2, height / 2 - 420);
+    text("Day 5 Task: Scan Martian Samples", width / 2, height / 2 - 420);
     noStroke();
 
-    // Transculent box
     fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -194,38 +199,29 @@ function draw() {
 
     if (next1Button.mouse.presses()) {
       hideAllButtons();
-      screen = 3; // Event 1 / Decision 2 (Solar Flare)
+      screen = 3; 
     }
   }
 
   // SCREEN 3: EVENT 1 & DECISION 2 (Day 10 Solar Flare Alert)
   else if (screen == 3) {
-    // 1. Set a solid background color to fill the empty borders instead of stretching
     background('#180B24'); 
-
-    // 2. Draw the background image while keeping its exact aspect ratio
     imageMode(CENTER);
-    
-    // Calculate proportional height based on your canvas width to avoid squishing
     let imgAspect = marsBg.width / marsBg.height;
-    let drawWidth = width; // or set a custom max width like 1200
-    let drawHeight = drawWidth / imgAspect;
+    image(marsBg, width / 2, height / 2, width, width / imgAspect);
 
-    image(marsBg, width / 2, height / 2, drawWidth, drawHeight);
+    drawResourceTracker();
 
     fill('#ffffff');
-    stroke('white')
+    stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
     text("DAY 10: Solar flare alert from Earth!", width / 2, height / 2 - 420);
     noStroke();
 
-    // Alert astronaut
     image(alertAstronautImg, 140, height / 2 - 80, 350, 400);
 
-
-    // Transculent box
     fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -237,7 +233,6 @@ function draw() {
     textSize(25);
     text("What do we do? Shelter in the storage zone is safe but the heater drains our power reserves... \nwhile finishing the sample risks high radiation but it will accelerate our scientific discoveries." , width / 2, height / 2 + 240);
 
-
     b1Button.w = 420; b1Button.h = 85; b1Button.collider = 'k'; b1Button.color = '#ffb977';
     b1Button.text = "Shelter in storage zone\n(Safe, heaters drain power)";
     b1Button.pos = { x: width / 2 - 230, y: height / 2 + 320 };
@@ -248,36 +243,46 @@ function draw() {
     b2Button.pos = { x: width / 2 + 230, y: height / 2 + 320 };
     b2Button.rotation = 0;
 
-    if (b1Button.mouse.presses() || b2Button.mouse.presses()) {
+    if (b1Button.mouse.presses()) {
+      missionStats.power -= 20;
+      missionStats.shielding += 10;
+      missionStats.decisionsLog.push({
+        decision: "Solar Flare: Shelter in Storage",
+        tradeoff: "-20% Power, +10% Shielding",
+        source: "NASA DONKI Space Weather Notifications"
+      });
       hideAllButtons();
-      screen = 4; // Timeskip 2 & Educational Task
+      screen = 4;
+    } else if (b2Button.mouse.presses()) {
+      missionStats.radiationDose += 12;
+      missionStats.supplies -= 5;
+      missionStats.decisionsLog.push({
+        decision: "Solar Flare: Finish Sample Drive",
+        tradeoff: "+12 Radiation Dose, -5% Supplies",
+        source: "NASA OSDR Space Biology Research"
+      });
+      hideAllButtons();
+      screen = 4;
     }
   }
 
   // SCREEN 4: TIMESKIP 2 & EDUCATIONAL TASK (Days 11 to 17)
   else if (screen == 4) {
-    // 1. Set a solid background color to fill the empty borders instead of stretching
     background('#180B24'); 
-
-    // 2. Draw the background image while keeping its exact aspect ratio
     imageMode(CENTER);
-    
-    // Calculate proportional height based on your canvas width to avoid squishing
     let imgAspect = foodBg.width / foodBg.height;
-    let drawWidth = width; // or set a custom max width like 1200
-    let drawHeight = drawWidth / imgAspect;
+    image(foodBg, width / 2, height / 2, width, width / imgAspect);
 
-    image(foodBg, width / 2, height / 2, drawWidth, drawHeight);
+    drawResourceTracker();
 
     fill('#ffffff');
-    stroke('white')
+    stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("Day 15 Task: Nutritional Meal Preparation", width / 2, height / 2 - 420 );
+    text("Day 15 Task: Nutritional Meal Preparation", width / 2, height / 2 - 420);
     noStroke();
 
-    // Transculent box
     fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -296,38 +301,30 @@ function draw() {
 
     if (next2Button.mouse.presses()) {
       hideAllButtons();
-      screen = 5; // Event 2 / Decision 3 (Dust Storm)
+      screen = 5; 
     }
   }
 
   // SCREEN 5: EVENT 2 & DECISION 3 (Day 18 Dust Storm & Power Drop)
   else if (screen == 5) {
-    // 1. Set a solid background color to fill the empty borders instead of stretching
     background('#180B24'); 
-
-    // 2. Draw the background image while keeping its exact aspect ratio
     imageMode(CENTER);
-    
-    // Calculate proportional height based on your canvas width to avoid squishing
     let imgAspect = labandmaintBg.width / labandmaintBg.height;
-    let drawWidth = width; // or set a custom max width like 1200
-    let drawHeight = drawWidth / imgAspect;
-    
-    image(labandmaintBg, width / 2, height / 2, drawWidth, drawHeight);
+    image(labandmaintBg, width / 2, height / 2, width, width / imgAspect);
+
+    drawResourceTracker();
 
     fill('#ffffff');
-    stroke('white')
+    stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
     text("DAY 18: Dust storm covers solar panels", width / 2, height / 2 - 420);
     noStroke();
 
-    // Display astronauts
-    image(worriedAstronautImg, 250, height / 2 + 25, 750, 880); // x, y, width, height
+    image(worriedAstronautImg, 250, height / 2 + 25, 750, 880);
     image(idleAstronaut2Img, width - 250, height / 2 + 77, 750, 880);
 
-    // Transculent box
     fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -349,36 +346,47 @@ function draw() {
     c2Button.pos = { x: width / 2 + 200, y: height / 2 + 330};
     c2Button.rotation = 0;
 
-    if (c1Button.mouse.presses() || c2Button.mouse.presses()) {
+    if (c1Button.mouse.presses()) {
+      missionStats.power += 20;
+      missionStats.supplies -= 5;
+      missionStats.decisionsLog.push({
+        decision: "Dust Storm: Save Power",
+        tradeoff: "+20% Power, -5% Supplies",
+        source: "NASA Spacecraft Power Documentation"
+      });
       hideAllButtons();
-      screen = 6; // Timeskip 3 & Educational Task
+      screen = 6;
+    } else if (c2Button.mouse.presses()) {
+      missionStats.power -= 25;
+      missionStats.supplies -= 10;
+      missionStats.decisionsLog.push({
+        decision: "Dust Storm: Keep Science On",
+        tradeoff: "-25% Power, -10% Supplies",
+        source: "NASA Rover Operational Manual"
+      });
+      hideAllButtons();
+      screen = 6;
     }
   }
 
   // SCREEN 6: TIMESKIP 3 & SOLAR PANEL CLEANING (Days 19 to 22)
   else if (screen == 6) {
-    // 1. Set a solid background color
     background('#180B24'); 
-
-    // 2. Select background image based on whether panels are cleaned
     imageMode(CENTER);
     let currentPanelBg = panelsCleaned ? cleanPanelsBg : dirtyPanelsBg;
-    
     let imgAspect = currentPanelBg.width / currentPanelBg.height;
-    let drawWidth = width; 
-    let drawHeight = drawWidth / imgAspect;
+    image(currentPanelBg, width / 2, height / 2, width, width / imgAspect);
 
-    image(currentPanelBg, width / 2, height / 2, drawWidth, drawHeight);
+    drawResourceTracker();
 
     fill('#ffffff');
-    stroke('white')
+    stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text(panelsCleaned ? "Day 20: Panels Swept & Clean!" : "Day 19: Cleaning Solar Panels", width / 2, height / 2 - 420);
+    text(panelsCleaned ? "Day 20: Panels Cleaned!" : "Day 19: Cleaning Solar Panels", width / 2, height / 2 - 420);
     noStroke();
 
-    // Translucent box
     fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -386,15 +394,13 @@ function draw() {
     rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
     noStroke();
 
-    fill('white')
+    fill('white');
     textSize(25);
-    
-    // Change text dynamically based on cleaning state
     if (!panelsCleaned) {
       text("Fine Martian dust clings to panels via electrostatic forces. Regular maintenance and sweeping \nare essential to restore photovoltaic efficiency and maintain outpost power generation.", width / 2, height / 2 + 240);
       next3Button.text = "Sweep & Clean Panels";
     } else {
-      text("Dust cleared successfully! Photovoltaic power generation is back to 100%. Energy reserves \nstabilized for the remainder of the mission.", width / 2, height / 2 + 240);
+      text("Panels cleaned successfully! Power generation restored to maximum capacity.", width / 2, height / 2 + 240);
       next3Button.text = "Continue to Event 3";
     }
 
@@ -402,102 +408,43 @@ function draw() {
     next3Button.pos = { x: width / 2, y: height / 2 + 325 };
     next3Button.rotation = 0;
 
-    // Two-step button click handler
     if (next3Button.mouse.presses()) {
       if (!panelsCleaned) {
-        panelsCleaned = true; // Step 1: Switch to clean view
+        panelsCleaned = true;
+        missionStats.power = min(100, missionStats.power + 25);
+        missionStats.decisionsLog.push({
+          decision: "Maintenance: Cleaning Panels",
+          tradeoff: "+25% Power Restored",
+          source: "NASA Surface Dust Studies"
+        });
       } else {
-        panelsCleaned = false; // Step 2: Reset flag for replays and move forward
+        panelsCleaned = false;
         hideAllButtons();
-        screen = 7; // Move to Event 3 / Decision 4
+        screen = 7; 
       }
     }
   }
 
-  // SCREEN 7: EVENT 3 & DECISION 4 (Day 23 Air Scrubber Alarm)
+  // SCREEN 7: ROVER CHECKS & MAINTENANCE (Day 26)
   else if (screen == 7) {
-    // 1. Set a solid background color to fill the empty borders instead of stretching
     background('#180B24'); 
-
-    // 2. Draw the background image while keeping its exact aspect ratio
     imageMode(CENTER);
-    
-    // Calculate proportional height based on your canvas width to avoid squishing
-    let imgAspect = labandmaintBg.width / labandmaintBg.height;
-    let drawWidth = width; // or set a custom max width like 1200
-    let drawHeight = drawWidth / imgAspect;
-    
-    image(labandmaintBg, width / 2, height / 2, drawWidth, drawHeight);
-
-    fill('#ffffff');
-    stroke('white')
-    strokeWeight(1);
-    textSize(30);
-    textAlign(CENTER, CENTER);
-    text("DAY 23: Air scrubber alarm! CO2 levels rising in habitat." , width / 2, height / 2 - 420);
-    noStroke();
-
-    image(alertAstronautImg, 250, height / 2 + 25, 750, 880); // x, y, width, height
-    image(idleAstronaut2Img, width - 250, height / 2 + 77, 750, 880);
-
-
-    // Transculent box
-    fill(18, 10, 31, 190);
-    stroke('#ff8c49');
-    strokeWeight(3);
-    rectMode(CENTER);
-    rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
-    noStroke();
-
-    fill('white');
-    textSize(25);
-    text("How do we fix the air? Repairing it now would be safe, but it would cost power and a whole \nday of science... on the other hand, we can use the backup scrubber, but there is no spare.",  width / 2, height / 2 + 240);
-
-    d1Button.w = 390; d1Button.h = 85; d1Button.collider = 'k'; d1Button.color = '#e69c5f';
-    d1Button.text = "Repair it now\n(Costs power/science day, safe)";
-    d1Button.pos = { x: width / 2 - 200, y: height / 2 + 330 };
-    d1Button.rotation = 0;
-
-    d2Button.w = 380; d2Button.h = 85; d2Button.collider = 'k'; d2Button.color = '#e6c39c';
-    d2Button.text = "Use backup scrubber\n(Fast fix, no spares left)";
-    d2Button.pos = { x: width / 2 + 200, y: height / 2 + 330 };
-    d2Button.rotation = 0;
-
-    if (d1Button.mouse.presses() || d2Button.mouse.presses()) {
-      hideAllButtons();
-      screen = 8; // Timeskip 4 & Educational Task
-    }
-  }
-
-  // SCREEN 8: TIMESKIP 4 & EDUCATIONAL TASK (Days 24 to 29)
-  else if (screen == 8) {
-    // 1. Set a solid background color to fill the empty borders instead of stretching
-    background('#180B24'); 
-
-    // 2. Draw the background image while keeping its exact aspect ratio
-    imageMode(CENTER);
-    
-    // Calculate proportional height based on your canvas width to avoid squishing
     let imgAspect = roverBg.width / roverBg.height;
-    let drawWidth = width;
-    let drawHeight = drawWidth / imgAspect;
+    image(roverBg, width / 2, height / 2, width, width / imgAspect);
 
-    image(roverBg, width / 2, height / 2, drawWidth, drawHeight);
-
+    drawResourceTracker();
 
     fill('#ffffff');
-    stroke('white')
+    stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
     text("Day 26: Rover Checks & Maintenance", width / 2, height / 2 - 420);
     noStroke();
 
-    // Alert astronaut
     image(idleAstronaut1Img, 390, height / 2 - 20, 280, 330);
     image(idleAstronaut2Img, 975, height / 2 + 10, 270, 320);
 
-    // Transculent box
     fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -507,7 +454,7 @@ function draw() {
 
     textSize(25);
     fill('white');
-    text("Mars rovers require rigorous daily telemetry checks and mechanical maintenance. Monitoring \nactuator wear, wheel traction, and power distribution systems ensures long-term operational \nsurvival in the harsh, abrasive dust environment.",  width / 2, height / 2 + 250);
+    text("Mars rovers require rigorous daily telemetry checks and mechanical maintenance. Monitoring \nactuator wear, wheel traction, and power distribution systems ensures long-term operational \nsurvival in the harsh, abrasive dust environment.", width / 2, height / 2 + 250);
 
     next4Button.w = 340; next4Button.h = 67; next4Button.collider = 'k'; next4Button.color = '#ffbb9c';
     next4Button.text = "Continue to Final Window";
@@ -516,35 +463,30 @@ function draw() {
 
     if (next4Button.mouse.presses()) {
       hideAllButtons();
-      screen = 9; // Event 4 / Decision 5 (Day 30 Final Window)
+      screen = 9; 
     }
   }
 
-  // SCREEN 9: EVENT 4 & DECISION 5 (Day 30 Final Window & Ending choice)
+  // SCREEN 9: EVENT 4 & DECISION 5 (Day 30 Final Window)
   else if (screen == 9) {
-    // 1. Set a solid background color to fill the empty borders instead of stretching
     background('#180B24'); 
-
-    // 2. Draw the background image while keeping its exact aspect ratio
     imageMode(CENTER);
-    
-    // Calculate proportional height based on your canvas width to avoid squishing
     let imgAspect = marsBg.width / marsBg.height;
-    let drawWidth = width; // or set a custom max width like 1200
-    let drawHeight = drawWidth / imgAspect;
+    image(marsBg, width / 2, height / 2, width, width / imgAspect);
 
-    image(marsBg, width / 2, height / 2, drawWidth, drawHeight);
-
+    drawResourceTracker();
 
     fill('#ffffff');
-    stroke('white')
+    stroke('white');
     strokeWeight(1);
     textSize(30);
     textAlign(CENTER, CENTER);
-    text("DAY 30: Final mission window. Fuel and food for one trip." , width / 2, height / 2 - 420);
+    text("DAY 30: Final mission window. Fuel and food for one trip.", width / 2, height / 2 - 420);
     noStroke();
 
-    // Transculent box
+    image(happyAstronautImg, 140, height / 2 - 80, 340, 390);
+    image(idleAstronaut2Img, 340, height / 2 - 51, 340, 390);
+
     fill(18, 10, 31, 190);
     stroke('#ff8c49');
     strokeWeight(3);
@@ -552,13 +494,9 @@ function draw() {
     rect(width / 2, height / 2 + 287, width - 180, height - 1000, 15);
     noStroke();
 
-    // Alert astronaut
-    image(happyAstronautImg, 140, height / 2 - 80, 340, 390);
-    image(idleAstronaut2Img, 340, height / 2 - 51, 340, 390);
-
     fill('white');
     textSize(26);
-    text("Choosing the final destination:",  width / 2, height / 2 + 240);
+    text("Choosing the final destination:", width / 2, height / 2 + 240);
 
     e1Button.w = 320; e1Button.h = 80; e1Button.collider = 'k'; e1Button.color = '#ff9e6d';
     e1Button.text = "Long drive to far cliffs\n(Biggest discovery / risk)";
@@ -576,34 +514,76 @@ function draw() {
     e3Button.rotation = 0;
 
     if (e1Button.mouse.presses()) {
+      missionStats.supplies -= 20;
+      missionStats.decisionsLog.push({
+        decision: "Final Window: Far Cliffs Traverse",
+        tradeoff: "-20% Supplies, High Science",
+        source: "NASA Mars Traverse Planning Data"
+      });
       hideAllButtons();
       screen = 10; 
     } else if (e2Button.mouse.presses()) {
+      missionStats.supplies -= 10;
+      missionStats.decisionsLog.push({
+        decision: "Final Window: Local Base Trip",
+        tradeoff: "-10% Supplies, Balanced Science",
+        source: "NASA Mission Profiles"
+      });
       hideAllButtons();
       screen = 11; 
     } else if (e3Button.mouse.presses()) {
+      missionStats.supplies += 5;
+      missionStats.decisionsLog.push({
+        decision: "Final Window: Immediate Return",
+        tradeoff: "+5% Supplies Saved",
+        source: "NASA Safety Protocols"
+      });
       hideAllButtons();
       screen = 12; 
     }
   }
 
-  // ENDINGS (Screens 10, 11, 12)
+  // ENDINGS & MISSION REPORT (Screens 10, 11, 12)
   else if (screen >= 10 && screen <= 12) {
     background("#180B24");
     showStarfield();
+
     let endingText = "";
     if (screen == 10) endingText = "ENDING: SCIENCE STAR\nGreat discoveries made, tight resources managed!";
     if (screen == 11) endingText = "ENDING: STEADY EXPLORER\nBalanced mission executed with a safe return!";
     if (screen == 12) endingText = "ENDING: SAFETY FIRST\nHealthy crew returned home with careful resource use!";
 
-    drawTextBox(endingText + "\n\nWhat would you trade differently next time?");
+    // Direct text rendering without border box
+    fill('#ffe2ab');
+    noStroke();
+    textSize(28);
+    textAlign(CENTER, CENTER);
+    text(endingText + "\n\nWhat would you trade differently next time?", width / 2, height / 2 - 140);
 
+    // Display decision log & NASA citations beneath
+    textSize(16);
+    textAlign(CENTER, TOP);
+    
+    let logSummary = "Mission Log & NASA Citations:\n";
+    for (let i = 0; i < missionStats.decisionsLog.length; i++) {
+      let log = missionStats.decisionsLog[i];
+      logSummary += `• ${log.decision} (${log.tradeoff}) — [${log.source}]\n`;
+    }
+    text(logSummary, width / 2, height / 2 + 20);
+
+    // Replay Mission Button with original format
     restartButton.w = 220; restartButton.h = 70; restartButton.collider = 'k'; restartButton.color = '#b8acfb';
     restartButton.text = "Replay Mission";
-    restartButton.pos = { x: width / 2, y: height / 2 + 180 };
+    restartButton.pos = { x: width / 2, y: height / 2 + 230 };
     restartButton.rotation = 0;
 
     if (restartButton.mouse.presses()) {
+      missionStats.power = 100;
+      missionStats.shielding = 80;
+      missionStats.supplies = 100;
+      missionStats.radiationDose = 12;
+      missionStats.decisionsLog = [];
+      panelsCleaned = false;
       hideAllButtons();
       screen = 0;
     }
@@ -612,12 +592,24 @@ function draw() {
 
 /* HELPER FUNCTIONS */
 
-function drawTextBox(txt) {
-  fill('#ffe2ab');
+function drawResourceTracker() {
+  push();
   noStroke();
-  textSize(28);
-  textAlign(CENTER, CENTER);
-  text(txt, width / 2, height / 2 - 80);
+  fill(18, 10, 31, 200);
+  rectMode(CORNER);
+  rect(30, 30, 240, 130, 10);
+
+  fill('#ffe2ab');
+  textSize(18);
+  textAlign(LEFT, TOP);
+  
+  let x = 45;
+  let y = 45;
+  text(`Power: ${missionStats.power}%`, x, y);
+  text(`Shields: ${missionStats.shielding}%`, x, y + 25);
+  text(`Supplies: ${missionStats.supplies}%`, x, y + 50);
+  text(`Radiation: ${missionStats.radiationDose} mSv`, x, y + 75);
+  pop();
 }
 
 function hideAllButtons() {
